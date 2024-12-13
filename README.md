@@ -26,7 +26,7 @@ hype.pass allows you to store your passwords and card information locally on you
 
 ## 🚀 Features
 
-- 👨🏻 **View & Edit your App Profile**
+- 👨🏻 **Save Passwords securely**
 - 🎥 **Watch our Youtube Videos directly from the App**
 - 🪟 **Enjoy watching Videos in Picture-in-Picture Mode**
 - 💬 **Chat with fellow App Users**
