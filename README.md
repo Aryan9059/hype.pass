@@ -26,17 +26,13 @@ hype.pass allows you to store your passwords and card information locally on you
 
 ## 🚀 Features
 
-- 👨🏻 **Save Passwords securely**
-- 🎥 **Watch our Youtube Videos directly from the App**
-- 🪟 **Enjoy watching Videos in Picture-in-Picture Mode**
-- 💬 **Chat with fellow App Users**
-- 🖼️ **Share Images with other Users**
-- 📑 **Stay up-to-date with Feeds & Updates Channel**
-- 📼 **Watch Curated Short Videos**
+- 🗝️ **Save Passwords securely offline on your phone**
+- 💳 **Save your Card details securely**
+- 📤 **Import/Export saved Passwords/Cards**
+- ✨ **Auto generate strong Passwords**
 - 🎬 **Smooth Animations**
 - 🎨 **Material 3 based Modern UI**
-- 🌚 **Available in Light/Dark Mode with Exiting Themes**
-- 🕧 **Includes a Modern & Beautiful Clock Widget**
+- 🌚 **Available in Light/Dark Mode**
 
 ## 🧑🏻‍💻 Tech Stack & Tools Used
 
