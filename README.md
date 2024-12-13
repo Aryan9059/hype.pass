@@ -15,7 +15,7 @@ hype.pass allows you to store your passwords and card information locally on you
 <br/>
 <br/>
 
-![Banner](https://github.com/Aryan9059/fizanto-fuzz/blob/457251e60b473e41dfd4afb30c75b0680b96f701/assets/screenshots_banner.png)
+![Banner](https://github.com/Aryan9059/hype.pass/blob/0505c81920a8e12600939e7adceaa4f6823c9e2e/sources/banner_github.png)
 
 <div style="display: flex; flex-direction: row;">
     <a href='https://github.com/Aryan9059/hype.pass/releases/latest'><img alt='Get it on Github' src='https://github.com/vishal2376/snaptick/assets/38159691/f502e2ec-dbf4-4ed6-b23f-a47b74080fea' style="width:200px"></a>
