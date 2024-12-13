@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://github.com/Aryan9059/hype.pass/blob/457a3c4279c07250e5b778a2f7214fafca0426a3/assets/logo_github.png" width="100px"/>
+<img src="https://github.com/Aryan9059/hype.pass/blob/ce25e0884c48bd3a196ca768ab978b6bc36c6d25/sources/icon_gradient_white.png" width="100px"/>
 
 # **hype.pass**
 
