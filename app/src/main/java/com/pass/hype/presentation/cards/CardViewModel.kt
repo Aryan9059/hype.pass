@@ -9,7 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class CardViewModel: ViewModel() {
-    val cardDao = HypePass.cardDatabase.cardDao()
+    private val cardDao = HypePass.cardDatabase.cardDao()
 
     val cardList: LiveData<List<Cards>> = cardDao.getAllCards()
 

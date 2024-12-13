@@ -6,15 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.pass.hype.HypePass
 import com.pass.hype.data.local.passwords.Passwords
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 class PasswordViewModel: ViewModel() {
 
-    val passwordDao = HypePass.passwordDatabase.passwordDao()
+    private val passwordDao = HypePass.passwordDatabase.passwordDao()
 
     val passwordsList: LiveData<List<Passwords>> = passwordDao.getAllPasswords()
 
@@ -29,4 +25,6 @@ class PasswordViewModel: ViewModel() {
             passwordDao.deletePassword(passwordId)
         }
     }
+
+
 }

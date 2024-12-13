@@ -1,9 +1,12 @@
 [versions]
+accompanistSystemuicontroller = "0.27.0"
 agp = "8.5.0"
+androidDatabaseSqlcipher = "4.5.0"
 androidxHiltCompilerVersion = "1.2.0"
 androidxHiltNavigationComposeVersion = "1.2.0"
 androidxPagingRuntime = "3.3.0"
 biometric = "1.1.0"
+core = "1.9.52"
 coreSplashscreen = "1.0.1"
 foundationVersion = "1.7.0-beta06"
 googleHiltAndroid = "2.48"
@@ -21,11 +24,17 @@ composeBom = "2024.04.01"
 material = "1.6.8"
 materialIconsExtendedVersion = "1.6.8"
 navigationCompose = "2.7.7"
+roomdatabasebackup = "1.0.1"
 roomVersion = "2.5.2"
 runtimeLivedata = "1.6.8"
+sqlite = "2.4.0"
+timeago = "4.0.3"
 ui = "1.6.8"
+appcompat = "1.7.0"
 
 [libraries]
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
+android-database-sqlcipher = { module = "net.zetetic:android-database-sqlcipher", version.ref = "androidDatabaseSqlcipher" }
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
@@ -40,7 +49,10 @@ androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomVers
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomVersion" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomVersion" }
 androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
+androidx-sqlite = { module = "androidx.sqlite:sqlite", version.ref = "sqlite" }
+compose-destinations-core = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "core" }
 foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundationVersion" }
+github-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "core" }
 google-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "googleHiltAndroidCompiler" }
 google-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "googleHiltAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -57,7 +69,10 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtendedVersion" }
+roomdatabasebackup = { module = "de.raphaelebner:roomdatabasebackup", version.ref = "roomdatabasebackup" }
+timeago = { module = "com.github.marlonlom:timeago", version.ref = "timeago" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -1,4 +1,4 @@
-package com.pass.hype.presentation.components
+package com.pass.hype.presentation.components.dialog
 
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text

@@ -57,7 +57,6 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.substring
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -67,6 +66,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pass.hype.R
 import com.pass.hype.data.local.cards.Cards
 import com.pass.hype.presentation.cards.CardViewModel
+import com.pass.hype.presentation.components.dialog.AddCardDialog
+import com.pass.hype.presentation.components.dialog.DeleteDialog
 import kotlinx.coroutines.launch
 
 val LatoFont = FontFamily(
@@ -197,7 +198,6 @@ fun CardItem(
             .fillMaxWidth()
             .padding(horizontal = 8.dp)
             .padding(bottom = 10.dp)
-            // Aspect Ratio in Compose
             .aspectRatio(bankCardAspectRatio)
             .graphicsLayer {
                 alpha = alphaAnimation.value
@@ -335,22 +335,21 @@ fun CardItem(
 
 @Composable
 fun BankCardBackground(baseColor: Color) {
-    val colorSaturation75 = baseColor.setSaturation(0.75f)
-    val colorSaturation50 = baseColor.setSaturation(0.5f)
-    // Drawing Shapes with Canvas
+    val colorSaturation75 = baseColor.setSaturation(0.9f)
+    val colorSaturation50 = baseColor.setSaturation(0.6f)
+
     Canvas(
         modifier = Modifier
             .fillMaxSize()
             .background(baseColor)
     ) {
-        // Drawing Circles
         drawCircle(
-            color = colorSaturation75,
+            color = colorSaturation50,
             center = Offset(x = size.width * 0.2f, y = size.height * 0.6f),
             radius = size.minDimension * 0.85f
         )
         drawCircle(
-            color = colorSaturation50,
+            color = colorSaturation75,
             center = Offset(x = size.width * 0.1f, y = size.height * 0.3f),
             radius = size.minDimension * 0.75f
         )
@@ -371,13 +370,10 @@ fun Color.toHsl(): FloatArray {
     val saturation: Float
 
     if (maxComponent == minComponent) {
-        // Grayscale color, no saturation and hue is undefined
         hue = 0f
         saturation = 0f
     } else {
-        // Calculating saturation
         saturation = if (lightness > 0.5) delta / (2 - maxComponent - minComponent) else delta / (maxComponent + minComponent)
-        // Calculating hue
         hue = when (maxComponent) {
             redComponent -> 60 * ((greenComponent - blueComponent) / delta % 6)
             greenComponent -> 60 * ((blueComponent - redComponent) / delta + 2)
@@ -385,7 +381,6 @@ fun Color.toHsl(): FloatArray {
         }
     }
 
-    // Returning HSL values, ensuring hue is within 0-360 range
     return floatArrayOf(hue.coerceIn(0f, 360f), saturation, lightness)
 }
 
@@ -407,13 +402,11 @@ fun hslToColor(hue: Float, saturation: Float, lightness: Float): Color {
         5 -> { red += chroma; blue += secondaryColorComponent }
     }
 
-    // Creating a color from RGB components
     return Color(red = red, green = green, blue = blue)
 }
 
 fun Color.setSaturation(newSaturation: Float): Color {
     val hslValues = this.toHsl()
-    // Adjusting the saturation while keeping hue and lightness the same
     return hslToColor(hslValues[0], newSaturation.coerceIn(0f, 1f), hslValues[2])
 }
 
@@ -449,10 +442,10 @@ fun BankCardNumber(cardNumber: String) {
 fun BankCardDotGroup() {
     Canvas(
         modifier = Modifier.width(48.dp),
-        onDraw = { // You can adjust the width as needed
+        onDraw = {
             val dotRadius = 4.dp.toPx()
             val spaceBetweenDots = 8.dp.toPx()
-            for (i in 0 until 4) { // Draw four dots
+            for (i in 0 until 4) {
                 drawCircle(
                     color = Color.White,
                     radius = dotRadius,
@@ -479,18 +472,16 @@ fun BankCardLabelAndText(label: String, text: String, clipboardManager: Clipboar
         Text(
             text = label.uppercase(),
             style = TextStyle(
-                fontFamily = LatoFont,
                 fontWeight = FontWeight.W300,
                 fontSize = 12.sp,
                 letterSpacing = 1.sp,
-                color = Color.White
+                color = Color.LightGray
             )
         )
         Spacer(modifier = Modifier.height(4.dp))
         Text(
             text = text.uppercase(),
             style = TextStyle(
-                fontFamily = LatoFont,
                 fontWeight = FontWeight.W400,
                 fontSize = 16.sp,
                 letterSpacing = 1.sp,

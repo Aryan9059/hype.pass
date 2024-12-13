@@ -1,5 +1,9 @@
 package com.pass.hype.presentation.settings
 
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -14,12 +18,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Pin
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -28,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.pass.hype.R
 import com.pass.hype.presentation.components.SettingsTile
+import com.pass.hype.presentation.components.dialog.ChangePinDialog
 
 
 @Composable
@@ -35,13 +45,41 @@ fun SettingsScreen(modifier: Modifier) {
     val alphaAnimation = remember { Animatable(initialValue = 0f) }
     val context = LocalContext.current
 
+    val sharedPreferences: SharedPreferences =
+        context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+    val pinStored = sharedPreferences.getString("stored_value", "") ?: ""
+
+    var isChangePinDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var oldPin by remember { mutableStateOf("") }
+    var newPin by remember { mutableStateOf("") }
+
+    ChangePinDialog(
+        isOpen = isChangePinDialogOpen,
+        oldPin = oldPin,
+        newPin = newPin,
+        isStart = false,
+        onDismissRequest = {
+            isChangePinDialogOpen = false
+            oldPin = ""
+            newPin = ""
+                           },
+        onOldPinChanged = { oldPin = it },
+        onNewPinChanged = { newPin = it },
+        onChange = {
+            sharedPreferences.edit().putInt("pinLength", newPin.length).apply()
+            sharedPreferences.edit().putString("stored_value", newPin).apply()
+                   isChangePinDialogOpen = false},
+        storedValue = pinStored)
+
     LaunchedEffect(0) {
         alphaAnimation.animateTo(targetValue = 1f, animationSpec = tween(300, 0))
     }
 
-    LazyColumn(modifier = modifier.fillMaxSize().graphicsLayer {
-        alpha = alphaAnimation.value
-    }, horizontalAlignment = Alignment.CenterHorizontally){
+    LazyColumn(modifier = modifier
+        .fillMaxSize()
+        .graphicsLayer {
+            alpha = alphaAnimation.value
+        }, horizontalAlignment = Alignment.CenterHorizontally){
         item {
             Spacer(modifier = Modifier.size(16.dp))
             Card(modifier = Modifier
@@ -55,6 +93,14 @@ fun SettingsScreen(modifier: Modifier) {
             Text(text = "Created with ❤️ by Aryan Srivastava", style = MaterialTheme.typography.bodyMedium)
 
             Spacer(modifier = Modifier.size(16.dp))
+            SettingsTile(
+                icon = Icons.Default.Pin,
+                title = "Change Pin",
+                summary = "Change the security pin of the app",
+                onClick = {
+                    isChangePinDialogOpen = true
+                }
+            )
             SettingsTile(
                 icon = Icons.Default.Password,
                 title = "Import/Export Passwords",
@@ -76,10 +122,10 @@ fun SettingsScreen(modifier: Modifier) {
                 title = "Source Code",
                 summary = "View, improve & pull our source code",
                 onClick = {
-
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Aryan9059/hype.pass"))
+                    context.startActivity(intent)
                 }
             )
-
             Spacer(modifier = Modifier.size(16.dp))
         }
     }

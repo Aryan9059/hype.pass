@@ -1,4 +1,4 @@
-package com.pass.hype.presentation.components
+package com.pass.hype.presentation.components.dialog
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
@@ -18,6 +18,7 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +32,7 @@ import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.unit.dp
 import com.pass.hype.utils.cardList
+import java.util.Calendar
 
 @SuppressLint("DiscouragedApi")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -164,10 +166,12 @@ fun AddCardDialog(
 
                     Spacer(modifier = Modifier.size(6.dp))
 
+                    val month = if (expiryMonth == "" ) 0 else expiryMonth.toInt()
+
                     Row {
                         OutlinedTextField(
                             modifier = Modifier.weight(1F),
-                            value = expiryMonth,
+                            value = if (month <= 12) expiryMonth else "12",
                             onValueChange = onExpiryMonthChanged,
                             label = { Text(text = "Month") },
                             singleLine = true,

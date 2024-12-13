@@ -1,4 +1,4 @@
-package com.pass.hype.presentation
+package com.pass.hype.presentation.components
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -41,11 +41,11 @@ fun EmptyScreen(modifier: Modifier, screenText: String) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.blank_black else R.drawable.blank_white),
+                painter = painterResource(id = if (isSystemInDarkTheme()) R.drawable.empty_dark else R.drawable.empty_light),
                 contentDescription = "No Passwords Saved",
                 modifier = Modifier.size(196.dp)
             )
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             Text(text = "It's all empty here!", style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(6.dp))
             Text(text = screenText, style = MaterialTheme.typography.bodyMedium)

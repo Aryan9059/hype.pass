@@ -67,9 +67,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.pass.hype.R
 import com.pass.hype.data.local.passwords.Passwords
+import com.pass.hype.presentation.components.dialog.AddPasswordDialog
+import com.pass.hype.presentation.components.dialog.DeleteDialog
 import com.pass.hype.presentation.passwords.PasswordViewModel
 import com.pass.hype.utils.appList
 import com.pass.hype.utils.capitalizeWords
+import com.pass.hype.utils.generateStrongPassword
+import com.pass.hype.utils.isStrongPassword
 import kotlinx.coroutines.launch
 
 @SuppressLint("DiscouragedApi")
@@ -94,17 +98,15 @@ fun PasswordItem(
     var password by remember { mutableStateOf(item.password) }
 
     AddPasswordDialog(
-        edit = true,
-        isOpen = isPasswordDialogOpen,
         app = app,
         email = email,
         password = password,
-        onDismissRequest = {
+        onDismiss = {
             isPasswordDialogOpen = false
             email = item.email
             password = item.password
             app = item.appName },
-        onConfirmButtonClick = {
+        onConfirm = {
             vm.addPassword(
                 Passwords(
                     appName = app,
@@ -118,8 +120,16 @@ fun PasswordItem(
             vm.deletePassword(item.passwordId)
             isPasswordDialogOpen = false },
         onEmailChanged = {email = it},
+        isOpen = isPasswordDialogOpen,
         onPasswordChanged = {password = it},
-        onAppChanged = {app = it}
+        onAppChanged = {app = it},
+        onCreateClick = {password = generateStrongPassword()},
+        passStrength =
+        if (password.isStrongPassword() == 0 || password.length <= 4) "Weakest"
+        else if (password.isStrongPassword() == 1 || password.length <= 8) "Weak"
+        else if (password.isStrongPassword() == 2 || password.length <= 12) "Moderate"
+        else if (password.isStrongPassword() == 3 || password.length <= 16) "Strong"
+        else "Strongest"
     )
 
     val alphaAnimation = remember { Animatable(initialValue = 0f) }

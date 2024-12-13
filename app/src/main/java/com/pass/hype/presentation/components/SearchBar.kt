@@ -27,6 +27,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
@@ -34,13 +36,14 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.pass.hype.R
 
 @Composable
 fun SearchBar(
     hint: String,
     modifier: Modifier = Modifier,
     isEnabled: (Boolean) = true,
-    height: Dp = 108.dp,
+    height: Dp = 118.dp,
     cornerShape: RoundedCornerShape = RoundedCornerShape(50),
     onSearchClicked: () -> Unit = {},
     searchQuery: MutableState<TextFieldValue>,
@@ -51,7 +54,7 @@ fun SearchBar(
         modifier = modifier
             .height(height)
             .padding(horizontal = 10.dp)
-            .padding(top = 40.dp, bottom = 10.dp)
+            .padding(top = 44.dp, bottom = 16.dp)
             .fillMaxWidth()
             .background(
                 color = MaterialTheme.colorScheme.surfaceContainerHighest,
@@ -59,9 +62,7 @@ fun SearchBar(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(modifier = Modifier.size(40.dp).padding(start = 16.dp), onClick = {}) {
-            Icon(imageVector = Icons.Default.Search, contentDescription = "Close Button")
-        }
+        Icon(modifier = Modifier.size(40.dp).padding(start = 16.dp), imageVector = Icons.Default.Search, contentDescription = "Close Button")
         BasicTextField(
             modifier = modifier
                 .weight(5f)
@@ -81,6 +82,7 @@ fun SearchBar(
                     Text(
                         text = hint,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f),
+                        fontFamily = FontFamily(Font(R.font.password)),
                         fontSize = 16.sp,
                     )
                 }

@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId = "com.pass.hype"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -19,11 +19,15 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        lint {
+            checkReleaseBuilds = false
+        }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -62,6 +66,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.appcompat)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -74,9 +79,8 @@ dependencies {
     implementation(libs.androidx.core.splashscreen)
 
     //Compose Destination
-    val destinationVersion = "1.9.52"
-    implementation("io.github.raamcosta.compose-destinations:core:$destinationVersion")
-    ksp("io.github.raamcosta.compose-destinations:ksp:$destinationVersion")
+    implementation(libs.compose.destinations.core)
+    ksp(libs.github.ksp)
 
     // Room
     implementation(libs.androidx.room.runtime)
@@ -86,20 +90,20 @@ dependencies {
     implementation(libs.androidx.runtime.livedata)
     ksp (libs.androidx.lifecycle.compiler)
     implementation (libs.androidx.paging.paging.runtime)
-    implementation ("net.zetetic:android-database-sqlcipher:4.5.0")
-    implementation ("androidx.sqlite:sqlite:2.3.0")
+    implementation (libs.android.database.sqlcipher)
+    implementation (libs.androidx.sqlite)
 
     //BottomNavigation
     implementation (libs.ui)
     implementation(libs.androidx.navigation.compose)
-    implementation("io.github.raamcosta.compose-destinations:core:1.9.52")
-    ksp("io.github.raamcosta.compose-destinations:ksp:1.9.52")
+    implementation(libs.compose.destinations.core)
+    ksp(libs.github.ksp)
     implementation(libs.androidx.material)
 
     //timeAgo
-    implementation("com.github.marlonlom:timeago:4.0.3")
+    implementation(libs.timeago)
 
     //Biometric Authentication
     implementation(libs.androidx.biometric)
-    implementation ("de.raphaelebner:roomdatabasebackup:1.0.1")
+    implementation (libs.roomdatabasebackup)
 }
