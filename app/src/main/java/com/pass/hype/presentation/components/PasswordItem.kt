@@ -114,7 +114,8 @@ fun PasswordItem(
                     email = email,
                     password = password,
                     editTime = System.currentTimeMillis().toString(),
-                    edited = true
+                    edited = true,
+                    note = ""
                 )
             )
             vm.deletePassword(item.passwordId)

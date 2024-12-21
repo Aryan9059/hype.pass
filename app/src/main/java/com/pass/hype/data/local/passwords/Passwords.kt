@@ -3,7 +3,7 @@ package com.pass.hype.data.local.passwords
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "Passwords")
 data class Passwords(
     @PrimaryKey(autoGenerate = true)
     val passwordId: Int = 0,
@@ -12,5 +12,6 @@ data class Passwords(
     var email: String,
     var password: String,
     val editTime: String,
-    val edited: Boolean
+    val edited: Boolean,
+    val note: String
 )

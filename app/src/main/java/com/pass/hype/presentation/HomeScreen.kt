@@ -227,7 +227,8 @@ fun MainScreen(passwordViewModel: PasswordViewModel, cardViewModel: CardViewMode
                     email = email,
                     password = password,
                     editTime = System.currentTimeMillis().toString(),
-                    edited = false
+                    edited = false,
+                    note = ""
                 )
             )
             email = ""
