@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.pass.hype"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.pass.hype"
@@ -59,7 +59,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
-    implementation (libs.material.icons.extended)
+    implementation(libs.material.icons.extended)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.foundation)
@@ -88,13 +88,13 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.runtime.livedata)
-    ksp (libs.androidx.lifecycle.compiler)
-    implementation (libs.androidx.paging.paging.runtime)
-    implementation (libs.android.database.sqlcipher)
-    implementation (libs.androidx.sqlite)
+    ksp(libs.androidx.lifecycle.compiler)
+    implementation(libs.androidx.paging.paging.runtime)
+    implementation(libs.android.database.sqlcipher)
+    implementation(libs.androidx.sqlite)
 
     //BottomNavigation
-    implementation (libs.ui)
+    implementation(libs.ui)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.compose.destinations.core)
     ksp(libs.github.ksp)
@@ -105,5 +105,5 @@ dependencies {
 
     //Biometric Authentication
     implementation(libs.androidx.biometric)
-    implementation (libs.roomdatabasebackup)
+    implementation(libs.roomdatabasebackup)
 }

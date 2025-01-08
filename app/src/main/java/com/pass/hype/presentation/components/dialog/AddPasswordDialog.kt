@@ -62,7 +62,9 @@ fun AddPasswordDialog(
     app: String,
     email: String,
     password: String,
+    notes: String,
     onEmailChanged: (String) -> Unit,
+    onNotesChanged: (String) -> Unit,
     onPasswordChanged: (String) -> Unit,
     onAppChanged: (String) -> Unit
 ) {
@@ -87,154 +89,183 @@ fun AddPasswordDialog(
             title = { Text(text = "Create Password") },
             onDismissRequest = onDismiss,
             text = {
-                Column() {
-                    Spacer(Modifier.size(16.dp))
+            Column {
+                Spacer(Modifier.size(16.dp))
 
-                    val length = password.length
-                    Column(modifier = Modifier
+                val length = password.length
+                Column(
+                    modifier = Modifier
                         .fillMaxWidth()
-                        .clip(RoundedCornerShape(32.dp))) {
-                        Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                            Column {
-                                Text(modifier = Modifier
+                        .clip(RoundedCornerShape(32.dp))
+                ) {
+                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        Column {
+                            Text(
+                                modifier = Modifier
                                     .padding(bottom = 4.dp)
-                                    .align(Alignment.CenterHorizontally), text = "Password Strength", color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = 12.sp)
-                                Text(modifier = Modifier
+                                    .align(Alignment.CenterHorizontally),
+                                text = "Password Strength",
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                fontSize = 12.sp
+                            )
+                            Text(
+                                modifier = Modifier
                                     .padding(bottom = 6.dp)
-                                    .align(Alignment.CenterHorizontally), text = passStrength, fontSize = 28.sp, fontWeight = FontWeight.Bold)
-                                Text(modifier = Modifier
-                                    .align(Alignment.CenterHorizontally), text = "$length characters", color = MaterialTheme.colorScheme.primary, fontSize = 12.sp)
-                            }
-                            CircularProgressIndicator(
-                                progress = {
-                                    if (passStrength == "Weakest") 0F
-                                    else if (passStrength == "Weak") 0.25F
-                                    else if (passStrength == "Moderate")0.5F
-                                    else if (passStrength == "Strong") 0.75F
-                                    else 1F
-                                },
-                                strokeWidth = 12.dp,
-                                strokeCap = StrokeCap.Round,
-                                trackColor = MaterialTheme.colorScheme.background,
+                                    .align(Alignment.CenterHorizontally),
+                                text = passStrength,
+                                fontSize = 28.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Text(
                                 modifier = Modifier
-                                    .size(200.dp),
+                                    .align(Alignment.CenterHorizontally),
+                                text = "$length characters",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 12.sp
                             )
                         }
-                    }
-
-                    Spacer(Modifier.size(24.dp))
-
-                    Column {
-                        var expanded by remember { mutableStateOf(false) }
-
-                        val context = LocalContext.current
-                        val drawableId = remember(app.lowercase()) {
-                            context.resources.getIdentifier(
-                                app.lowercase(),
-                                "drawable",
-                                context.packageName
-                            )
-                        }
-                        ExposedDropdownMenuBox(
-                            expanded = expanded,
-                            onExpandedChange = { expanded = !expanded },
-                            modifier = Modifier
-                        ) {
-                            OutlinedTextField(
-                                value = app,
-                                onValueChange = onAppChanged,
-                                label = { Text(text = "Select App") },
-                                trailingIcon = {
-                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                                },
-                                keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
-                                leadingIcon = {
-                                    if (!appList.contains(app)) {
-                                        Icon(
-                                            imageVector = Icons.Default.Android,
-                                            contentDescription = "App Icon"
-                                        )
-                                    } else {
-                                        Icon(
-                                            modifier = Modifier.size(24.dp),
-                                            tint = MaterialTheme.colorScheme.onBackground,
-                                            painter = painterResource(id = drawableId),
-                                            contentDescription = "App Icon"
-                                        )
-                                    }
-                                },
-                                colors = OutlinedTextFieldDefaults.colors(),
-                                modifier = Modifier
-                                    .menuAnchor()
-                                    .fillMaxWidth()
-                            )
-
-                            ExposedDropdownMenu(
-                                expanded = expanded,
-                                onDismissRequest = { expanded = false },
-                                modifier = Modifier.height(208.dp)
-                            ) {
-                                appList.forEach { option: String ->
-                                    DropdownMenuItem(
-                                        text = { Text(text = option) },
-                                        onClick = {
-                                            onAppChanged(option)
-                                            expanded = false
-                                        }
-                                    )
+                        CircularProgressIndicator(
+                            progress = {
+                                when (passStrength) {
+                                    "Weakest" -> 0F
+                                    "Weak" -> 0.25F
+                                    "Moderate" -> 0.5F
+                                    "Strong" -> 0.75F
+                                    else -> 1F
                                 }
-                            }
-                        }
-
-                        Spacer(modifier = Modifier.size(6.dp))
-
-                        OutlinedTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            value = email,
-                            onValueChange = onEmailChanged,
-                            label = { Text(text = "Email/UserID") },
-                            singleLine = true,
-                            maxLines = 1,
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.AlternateEmail,
-                                    contentDescription = "Email"
-                                )
                             },
-                            isError = emailError != null && email.isNotBlank(),
-                            //supportingText = { Text(text = emailError.orEmpty())}
-
-                        )
-
-                        Spacer(modifier = Modifier.size(6.dp))
-
-                        OutlinedTextField(
-                            modifier = Modifier.fillMaxWidth(),
-                            value = password,
-                            onValueChange = onPasswordChanged,
-                            label = { Text(text = "Password") },
-                            singleLine = true,
-                            textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.password))),
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                            trailingIcon = {
-                                IconButton(onClick = onCreateClick){
-                                    Icon(
-                                        modifier = Modifier.size(20.dp),
-                                        painter = painterResource(R.drawable.create_icon),
-                                        contentDescription = "Create Password"
-                                    )
-                                } },
-                            isError = passwordError != null && password.isNotBlank(),
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Password,
-                                    contentDescription = "Password Text Box Icon"
-                                )
-                            }
+                            strokeWidth = 12.dp,
+                            strokeCap = StrokeCap.Round,
+                            trackColor = MaterialTheme.colorScheme.background,
+                            modifier = Modifier
+                                .size(200.dp),
                         )
                     }
                 }
-            },
+
+                Spacer(Modifier.size(24.dp))
+
+                Column {
+                    var expanded by remember { mutableStateOf(false) }
+
+                    val context = LocalContext.current
+                    val drawableId = remember(app.lowercase()) {
+                        context.resources.getIdentifier(
+                            app.lowercase(),
+                            "drawable",
+                            context.packageName
+                        )
+                    }
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = { expanded = !expanded },
+                        modifier = Modifier
+                    ) {
+                        OutlinedTextField(
+                            value = app,
+                            onValueChange = onAppChanged,
+                            label = { Text(text = "Select App") },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                            },
+                            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+                            leadingIcon = {
+                                if (!appList.contains(app)) {
+                                    Icon(
+                                        imageVector = Icons.Default.Android,
+                                        contentDescription = "App Icon"
+                                    )
+                                } else {
+                                    Icon(
+                                        modifier = Modifier.size(24.dp),
+                                        tint = MaterialTheme.colorScheme.onBackground,
+                                        painter = painterResource(id = drawableId),
+                                        contentDescription = "App Icon"
+                                    )
+                                }
+                            },
+                            colors = OutlinedTextFieldDefaults.colors(),
+                            modifier = Modifier
+                                .menuAnchor()
+                                .fillMaxWidth()
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false },
+                            modifier = Modifier.height(208.dp)
+                        ) {
+                            appList.forEach { option: String ->
+                                DropdownMenuItem(
+                                    text = { Text(text = option) },
+                                    onClick = {
+                                        onAppChanged(option)
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.size(6.dp))
+
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = email,
+                        onValueChange = onEmailChanged,
+                        label = { Text(text = "Email/UserID") },
+                        singleLine = true,
+                        maxLines = 1,
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.AlternateEmail,
+                                contentDescription = "Email"
+                            )
+                        },
+                        isError = emailError != null && email.isNotBlank(),
+                    )
+
+                    Spacer(modifier = Modifier.size(6.dp))
+
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = password,
+                        onValueChange = onPasswordChanged,
+                        label = { Text(text = "Password") },
+                        singleLine = true,
+                        textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.password))),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        trailingIcon = {
+                            IconButton(onClick = onCreateClick) {
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    painter = painterResource(R.drawable.create_icon),
+                                    contentDescription = "Create Password"
+                                )
+                            }
+                        },
+                        isError = passwordError != null && password.isNotBlank(),
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Default.Password,
+                                contentDescription = "Password Text Box Icon"
+                            )
+                        }
+                    )
+
+                    Spacer(modifier = Modifier.size(6.dp))
+
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = notes,
+                        onValueChange = onNotesChanged,
+                        label = { Text(text = "Additional Notes") },
+                        singleLine = false,
+                        maxLines = 3,
+                    )
+                }
+            }
+        },
             dismissButton = {
                 TextButton(onClick = onDismiss) {
                     Text(text = "Cancel")

@@ -4,23 +4,19 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
-import android.widget.Toast
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddCard
 import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Pin
-import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MediumTopAppBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -33,13 +29,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import com.pass.hype.R
 import com.pass.hype.presentation.components.SettingsTile
 import com.pass.hype.presentation.components.dialog.ChangePinDialog
 
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(modifier: Modifier) {
     val alphaAnimation = remember { Animatable(initialValue = 0f) }
@@ -81,18 +75,20 @@ fun SettingsScreen(modifier: Modifier) {
             alpha = alphaAnimation.value
         }, horizontalAlignment = Alignment.CenterHorizontally){
         item {
-            Spacer(modifier = Modifier.size(16.dp))
-            Card(modifier = Modifier
-                .size(160.dp), shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-            ) {
-                Image(painter = painterResource(id = R.drawable.logo), contentDescription = "hype.pass Logo")
-            }
-            Spacer(modifier = Modifier.size(16.dp))
-            Text(text = "hype.pass", style = MaterialTheme.typography.headlineMedium)
-            Spacer(modifier = Modifier.size(10.dp))
-            Text(text = "Created with ❤️ by Aryan Srivastava", style = MaterialTheme.typography.bodyMedium)
+            MediumTopAppBar(title = { Text(text = "Settings", style = MaterialTheme.typography.headlineLarge) })
+//            Spacer(modifier = Modifier.size(16.dp))
+//            Card(modifier = Modifier
+//                .size(160.dp), shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+//            ) {
+//                Image(painter = painterResource(id = R.drawable.logo), contentDescription = "hype.pass Logo")
+//            }
+//            Spacer(modifier = Modifier.size(16.dp))
+//            Text(text = "hype.pass", style = MaterialTheme.typography.headlineMedium)
+//            Spacer(modifier = Modifier.size(10.dp))
+//            Text(text = "Created with ❤️ by Aryan Srivastava", style = MaterialTheme.typography.bodyMedium)
+//
+//            Spacer(modifier = Modifier.size(16.dp))
 
-            Spacer(modifier = Modifier.size(16.dp))
             SettingsTile(
                 icon = Icons.Default.Pin,
                 title = "Change Pin",
@@ -101,22 +97,14 @@ fun SettingsScreen(modifier: Modifier) {
                     isChangePinDialogOpen = true
                 }
             )
+
             SettingsTile(
-                icon = Icons.Default.Password,
-                title = "Import/Export Passwords",
-                summary = "Import/Export your stored passwords.",
-                onClick = {
-                    Toast.makeText(context, "Coming Soon", Toast.LENGTH_LONG).show()
-                }
+                icon = Icons.Default.Fingerprint,
+                title = "Enable Fingerprint",
+                summary = "Enable biometric unlock",
+                onClick = {}
             )
-            SettingsTile(
-                icon = Icons.Default.AddCard,
-                title = "Import/Export Cards",
-                summary = "Import/Export your stored cards.",
-                onClick = {
-                    Toast.makeText(context, "Coming Soon", Toast.LENGTH_LONG).show()
-                }
-            )
+
             SettingsTile(
                 icon = Icons.Default.Code,
                 title = "Source Code",
@@ -130,4 +118,5 @@ fun SettingsScreen(modifier: Modifier) {
         }
     }
 }
+
 

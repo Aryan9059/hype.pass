@@ -1,5 +1,6 @@
 package com.pass.hype.presentation.components
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,11 +11,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -25,10 +32,16 @@ fun SettingsTile(
     summary: String? = null,
     onClick: () -> Unit = {}
 ) {
+    val pinSharedPrefs = LocalContext.current.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+    val isFingerprintEnabled = pinSharedPrefs.getBoolean("isFingerprintEnabled", false)
+    var isFingerprintEnabledCopy by remember { mutableStateOf(isFingerprintEnabled) }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(onClick = onClick)
+            .clickable(
+                onClick = onClick, enabled = title != "Enable Fingerprint"
+            )
             .padding(horizontal = 24.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -60,5 +73,12 @@ fun SettingsTile(
         }
 
         Spacer(modifier = Modifier.width(16.dp))
+
+        if (title == "Enable Fingerprint") {
+            Switch(checked = isFingerprintEnabledCopy, onCheckedChange = {
+                isFingerprintEnabledCopy = it
+                pinSharedPrefs.edit().putBoolean("isFingerprintEnabled", it).apply()
+            })
+        }
     }
 }

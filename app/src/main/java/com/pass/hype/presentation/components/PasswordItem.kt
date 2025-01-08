@@ -11,12 +11,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -96,11 +98,14 @@ fun PasswordItem(
     var app by remember { mutableStateOf(item.appName) }
     var email by remember { mutableStateOf(item.email) }
     var password by remember { mutableStateOf(item.password) }
+    var notes by remember { mutableStateOf(item.notes) }
 
     AddPasswordDialog(
         app = app,
         email = email,
         password = password,
+        notes = notes,
+        onNotesChanged = {notes = it},
         onDismiss = {
             isPasswordDialogOpen = false
             email = item.email
@@ -115,7 +120,7 @@ fun PasswordItem(
                     password = password,
                     editTime = System.currentTimeMillis().toString(),
                     edited = true,
-                    note = ""
+                    notes = notes
                 )
             )
             vm.deletePassword(item.passwordId)
@@ -229,7 +234,8 @@ fun PasswordItem(
                 OutlinedCard(
                     onClick = {
                         val sendIntent = Intent(Intent.ACTION_SEND).apply {
-                            putExtra(Intent.EXTRA_TEXT, "App Name: ${item.appName}\nEmail: ${item.email}\nPassword: ${item.password}")
+                            if (item.notes == "") putExtra(Intent.EXTRA_TEXT, "App Name: ${item.appName}\nEmail: ${item.email}\nPassword: ${item.password}")
+                            else putExtra(Intent.EXTRA_TEXT, "App Name: ${item.appName}\nEmail: ${item.email}\nPassword: ${item.password}\nAdditional Notes: ${item.notes}")
                             type = "text/plain"
                         }
                         val shareIntent = Intent.createChooser(sendIntent, null)
@@ -311,9 +317,34 @@ fun PasswordItem(
                         Icon(imageVector = Icons.Default.Password, contentDescription = "Password Text Box Icon")
                     }
                 )
+
+                if(item.notes != "") {
+                    Spacer(modifier = Modifier.size(8.dp))
+
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = notes,
+                        readOnly = true,
+                        onValueChange = { item.notes = it },
+                        label = { Text(text = "Additional Notes") },
+                        singleLine = false,
+                        maxLines = 3,
+                    )
+                }
             }
 
-            Row (modifier = Modifier.align(Alignment.End), horizontalArrangement = Arrangement.spacedBy(8.dp)){
+            Row (modifier = Modifier.align(Alignment.End).fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)){
+                Card(Modifier.align(Alignment.Bottom).padding(bottom = 4.dp), shape = RoundedCornerShape(21.dp), colors = CardDefaults.outlinedCardColors(), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)) {
+                    Text(
+                        text = if (password.isStrongPassword() == 0 || password.length <= 4) "Weakest"
+                    else if (password.isStrongPassword() == 1 || password.length <= 8) "Weak"
+                    else if (password.isStrongPassword() == 2 || password.length <= 12) "Moderate"
+                    else if (password.isStrongPassword() == 3 || password.length <= 16) "Strong"
+                    else "Strongest",
+                        Modifier.padding(horizontal = 12.dp, vertical = 2.dp), fontSize = 12.sp
+                    )
+                }
+                Spacer(modifier = Modifier.weight(1f))
                 OutlinedButton(onClick = {
                     isDeleteDialogOpen = true
                 },

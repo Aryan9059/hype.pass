@@ -33,6 +33,7 @@ import com.pass.hype.presentation.cards.CardViewModel
 import com.pass.hype.presentation.components.dialog.ChangePinDialog
 import com.pass.hype.presentation.passwords.PasswordViewModel
 import com.pass.hype.ui.theme.HypepassTheme
+import de.raphaelebner.roomdatabasebackup.core.RoomBackup
 
 class MainActivity : FragmentActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -48,6 +49,7 @@ class MainActivity : FragmentActivity() {
                 val pinSharedPrefs: SharedPreferences =
                     LocalContext.current.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
                 val pinStored = pinSharedPrefs.getString("stored_value", "") ?: ""
+                val isFingerPrintEnabled = pinSharedPrefs.getBoolean("isFingerprintEnabled", false)
                 val length = pinSharedPrefs.getInt("pinLength" , 0)
 
                 val onBoardSharedPrefs: SharedPreferences =
@@ -83,7 +85,7 @@ class MainActivity : FragmentActivity() {
                 val navController = rememberNavController()
                 var isLock by remember { mutableStateOf(false) }
 
-                if (isLock){
+                if (isLock && isFingerPrintEnabled){
                     val biometricAuthenticator = BiometricAuthenticator(LocalContext.current)
                     biometricAuthenticator.promptBiometricAuth(
                         title = "Unlock App",
@@ -147,6 +149,7 @@ class MainActivity : FragmentActivity() {
                         BiometricScreen(
                             length = length,
                             correctPin = pinStored,
+                            isFingerprintEnabled = isFingerPrintEnabled,
                             navController = navController
                         )
                     }

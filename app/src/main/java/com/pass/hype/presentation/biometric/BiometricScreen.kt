@@ -54,6 +54,7 @@ import androidx.navigation.NavController
 fun BiometricScreen(
     correctPin: String,
     length: Int,
+    isFingerprintEnabled: Boolean,
     navController: NavController) {
 
     var enteredPin by remember { mutableStateOf("") }
@@ -119,7 +120,7 @@ fun BiometricScreen(
                     listOf("1", "2", "3"),
                     listOf("4", "5", "6"),
                     listOf("7", "8", "9"),
-                    listOf("B", "0", "F")
+                    if (isFingerprintEnabled) listOf("B", "0", "F") else listOf("0", "B")
                 )
 
                 digits.forEach { row ->
@@ -135,6 +136,7 @@ fun BiometricScreen(
                                 .size(86.dp)
                                 .clip(RoundedCornerShape(50))
                                 .clickable(
+                                    enabled = !(digit == "F" && !isFingerprintEnabled),
                                     interactionSource = remember { MutableInteractionSource() },
                                     indication = rememberRipple(color = if (digit == "B" || digit == "F") MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.onBackground)
                                 ) {

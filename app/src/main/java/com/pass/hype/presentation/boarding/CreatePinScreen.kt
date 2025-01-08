@@ -9,6 +9,7 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.biometric.BiometricManager
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -18,7 +19,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -27,12 +30,15 @@ import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material.icons.automirrored.outlined.Backspace
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -66,6 +72,7 @@ fun OnBoardPinScreen(
     var notMatch by remember { mutableStateOf(false) }
 
     val vibrator = LocalContext.current.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+    var isFingerprintEnabled by remember { mutableStateOf(true) }
 
     val pinSharedPrefs: SharedPreferences = LocalContext.current.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
     val onBoardSharedPrefs: SharedPreferences = LocalContext.current.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
@@ -105,9 +112,22 @@ fun OnBoardPinScreen(
                     }
                 }
             }
-            Spacer(modifier = Modifier.size(36.dp))
+            Spacer(modifier = Modifier.size(24.dp))
+
+            if (isFingerprintAvailable(LocalContext.current)) {
+                Card(Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(bottom = 24.dp), shape = RoundedCornerShape(28.dp), colors = CardDefaults.cardColors().copy(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
+                    Row {
+                        Text(text = "Enable Fingerprint", color = MaterialTheme.colorScheme.onPrimaryContainer, fontSize = 18.sp, modifier = Modifier.align(Alignment.CenterVertically).padding(start = 20.dp))
+                        Spacer(Modifier.weight(1F))
+                        Switch(modifier = Modifier.padding(vertical = 12.dp).padding(end = 20.dp), checked = isFingerprintEnabled, onCheckedChange = {
+                            isFingerprintEnabled = it
+                        })
+                    }
+                }
+            }
 
             Row(
+                Modifier.padding(top = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -170,6 +190,7 @@ fun OnBoardPinScreen(
                                             if (storedPin == enteredPin){
                                                 pinSharedPrefs.edit().putInt("pinLength", maxPinLength).apply()
                                                 pinSharedPrefs.edit().putString("stored_value", enteredPin).apply()
+                                                pinSharedPrefs.edit().putBoolean("isFingerprintEnabled", isFingerprintEnabled).apply()
                                                 onBoardSharedPrefs.edit().putString("isUserNew", "No").apply()
                                                 navController.popBackStack()
                                                 navController.navigate("mainScreen")
@@ -221,5 +242,24 @@ fun OnBoardPinScreen(
                 }
             }
         }
+    }
+}
+
+fun isFingerprintAvailable(context: Context): Boolean {
+    val biometricManager = BiometricManager.from(context)
+    return when (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)) {
+        BiometricManager.BIOMETRIC_SUCCESS -> {
+            true
+        }
+        BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
+            false
+        }
+        BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
+            false
+        }
+        BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+            false
+        }
+        else -> false
     }
 }

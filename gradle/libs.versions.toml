@@ -1,22 +1,16 @@
 [versions]
-accompanistSystemuicontroller = "0.27.0"
-agp = "8.5.0"
+agp = "8.5.2"
 androidDatabaseSqlcipher = "4.5.0"
-androidxHiltCompilerVersion = "1.2.0"
-androidxHiltNavigationComposeVersion = "1.2.0"
-androidxPagingRuntime = "3.3.0"
+androidxPagingRuntime = "3.3.5"
 biometric = "1.1.0"
 core = "1.9.52"
 coreSplashscreen = "1.0.1"
-foundationVersion = "1.7.0-beta06"
-googleHiltAndroid = "2.48"
-googleHiltAndroidCompiler = "2.48"
+foundationVersion = "1.7.6"
 kotlin = "1.9.10"
 coreKtx = "1.13.1"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleExtensions = "2.6.2"
 lifecycleCompiler = "2.8.4"
 lifecycleRuntimeKtx = "2.8.2"
 activityCompose = "1.9.0"
@@ -33,15 +27,11 @@ ui = "1.6.8"
 appcompat = "1.7.0"
 
 [libraries]
-accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 android-database-sqlcipher = { module = "net.zetetic:android-database-sqlcipher", version.ref = "androidDatabaseSqlcipher" }
 androidx-biometric = { module = "androidx.biometric:biometric", version.ref = "biometric" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-splashscreen = { module = "androidx.core:core-splashscreen", version.ref = "coreSplashscreen" }
-androidx-hilt-hilt-navigation-compose2 = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "androidxHiltNavigationComposeVersion" }
-androidx-hilt-hilt-compiler2 = { module = "androidx.hilt:hilt-compiler", version.ref = "androidxHiltCompilerVersion" }
 androidx-lifecycle-compiler = { module = "androidx.lifecycle:lifecycle-compiler", version.ref = "lifecycleCompiler" }
-androidx-lifecycle-extensions = { module = "androidx.lifecycle:lifecycle-extensions", version.ref = "lifecycleExtensions" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "material" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-paging-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "androidxPagingRuntime" }
@@ -53,8 +43,6 @@ androidx-sqlite = { module = "androidx.sqlite:sqlite", version.ref = "sqlite" }
 compose-destinations-core = { module = "io.github.raamcosta.compose-destinations:core", version.ref = "core" }
 foundation = { module = "androidx.compose.foundation:foundation", version.ref = "foundationVersion" }
 github-ksp = { module = "io.github.raamcosta.compose-destinations:ksp", version.ref = "core" }
-google-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "googleHiltAndroidCompiler" }
-google-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "googleHiltAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

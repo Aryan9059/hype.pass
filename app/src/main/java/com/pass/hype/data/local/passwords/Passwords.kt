@@ -13,5 +13,5 @@ data class Passwords(
     var password: String,
     val editTime: String,
     val edited: Boolean,
-    val note: String
+    var notes: String
 )
