@@ -28,7 +28,7 @@ hype.pass allows you to store your passwords and card information locally on you
 
 - 🗝️ **Save Passwords securely offline on your phone**
 - 💳 **Save your Card details securely**
-- 📤 **Import/Export saved Passwords/Cards**
+- 🫰 **Use Biometric Authentication**
 - ✨ **Auto generate strong Passwords**
 - 🎬 **Smooth Animations**
 - 🎨 **Material 3 based Modern UI**
@@ -38,6 +38,7 @@ hype.pass allows you to store your passwords and card information locally on you
 
 - Android Kotlin
 - Jetpack Compose
+- MVVM Architecture
 - Room Database
 - Kotlin Coroutines
 - Jetpack Navigation
