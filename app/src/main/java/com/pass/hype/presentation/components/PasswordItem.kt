@@ -1,6 +1,7 @@
 package com.pass.hype.presentation.components
 
 import android.annotation.SuppressLint
+import android.content.ClipData
 import android.content.Intent
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
@@ -18,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -50,10 +50,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -64,7 +63,6 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.marlonlom.utilities.timeago.TimeAgo
 import com.pass.hype.R
@@ -131,11 +129,11 @@ fun PasswordItem(
         onAppChanged = {app = it},
         onCreateClick = {password = generateStrongPassword()},
         passStrength =
-        if (password.isStrongPassword() == 0 || password.length <= 4) "Weakest"
-        else if (password.isStrongPassword() == 1 || password.length <= 8) "Weak"
-        else if (password.isStrongPassword() == 2 || password.length <= 12) "Moderate"
-        else if (password.isStrongPassword() == 3 || password.length <= 16) "Strong"
-        else "Strongest"
+            if (password.isStrongPassword() == 0 || password.length <= 4) "Weakest"
+            else if (password.isStrongPassword() == 1 || password.length <= 8) "Weak"
+            else if (password.isStrongPassword() == 2 || password.length <= 12) "Moderate"
+            else if (password.isStrongPassword() == 3 || password.length <= 16) "Strong"
+            else "Strongest"
     )
 
     val alphaAnimation = remember { Animatable(initialValue = 0f) }
@@ -160,20 +158,20 @@ fun PasswordItem(
         shape = RoundedCornerShape(21.dp),
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-            .padding(bottom = 10.dp)
+            .padding(horizontal = 12.dp)
+            .padding(bottom = 12.dp)
             .graphicsLayer {
                 alpha = alphaAnimation.value
             }
             .animateContentSize(
                 animationSpec = tween(
-                    durationMillis = 300,
+                    durationMillis = 500,
                     easing = LinearOutSlowInEasing
                 )
             ),
         onClick = { expandedState = !expandedState }
     ) {
-        val clipboardManager = LocalClipboardManager.current
+        val clipboardManager = LocalClipboard.current.nativeClipboard
 
         Column(
             modifier = Modifier
@@ -239,7 +237,7 @@ fun PasswordItem(
                             type = "text/plain"
                         }
                         val shareIntent = Intent.createChooser(sendIntent, null)
-                        startActivity(context, shareIntent, null)
+                        context.startActivity(shareIntent)
                     },
                     modifier = Modifier.align(Alignment.CenterVertically),
                     shape = RoundedCornerShape(50)
@@ -273,12 +271,12 @@ fun PasswordItem(
                     singleLine = true,
                     readOnly = true,
                     modifier = Modifier
-                        .padding(top = 8.dp)
+                        .padding(top = 16.dp)
                         .fillMaxWidth(),
                     maxLines = 1,
                     trailingIcon = {
                         IconButton(onClick = {
-                            clipboardManager.setText(AnnotatedString(item.email))
+                            clipboardManager.setPrimaryClip(ClipData.newPlainText("Card Number", item.email))
                         }) {
                             Icon(imageVector = Icons.Default.CopyAll, contentDescription = "Copy Email")
                         }
@@ -297,7 +295,7 @@ fun PasswordItem(
                     readOnly = true,
                     visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                     modifier = Modifier
-                        .padding(top = 8.dp)
+                        .padding(top = 12.dp, bottom = 8.dp)
                         .fillMaxWidth(),
                     singleLine = true,
                     textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.password))),
@@ -334,14 +332,14 @@ fun PasswordItem(
             }
 
             Row (modifier = Modifier.align(Alignment.End).fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)){
-                Card(Modifier.align(Alignment.Bottom).padding(bottom = 4.dp), shape = RoundedCornerShape(21.dp), colors = CardDefaults.outlinedCardColors(), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)) {
+                Card(Modifier.align(Alignment.Bottom).padding(bottom = 4.dp), shape = RoundedCornerShape(21.dp), colors = CardDefaults.cardColors()) {
                     Text(
-                        text = if (password.isStrongPassword() == 0 || password.length <= 4) "Weakest"
-                    else if (password.isStrongPassword() == 1 || password.length <= 8) "Weak"
-                    else if (password.isStrongPassword() == 2 || password.length <= 12) "Moderate"
-                    else if (password.isStrongPassword() == 3 || password.length <= 16) "Strong"
-                    else "Strongest",
-                        Modifier.padding(horizontal = 12.dp, vertical = 2.dp), fontSize = 12.sp
+                        text = if (password.isStrongPassword() == 0 || password.length <= 4) "WEAKEST"
+                    else if (password.isStrongPassword() == 1 || password.length <= 8) "WEAK"
+                    else if (password.isStrongPassword() == 2 || password.length <= 12) "MODERATE"
+                    else if (password.isStrongPassword() == 3 || password.length <= 16) "STRONG"
+                    else "STRONGEST",
+                        Modifier.padding(horizontal = 14.dp, vertical = 3.dp), fontSize = 14.sp, fontFamily = FontFamily(Font(R.font.password))
                     )
                 }
                 Spacer(modifier = Modifier.weight(1f))
@@ -354,7 +352,7 @@ fun PasswordItem(
                     Text(text = "Delete", color = MaterialTheme.colorScheme.error)
                 }
 
-                Button(onClick = { clipboardManager.setText(AnnotatedString(item.password)) },
+                Button(onClick = { clipboardManager.setPrimaryClip(ClipData.newPlainText("Card Number", item.password)) },
                     modifier = Modifier
                         .padding(top = 8.dp)) {
                     Text(text = "Copy")

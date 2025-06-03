@@ -23,4 +23,7 @@ interface PasswordDao {
 
     @Query("SELECT * FROM Passwords WHERE appName LIKE '%' || :searchQuery || '%'")
     fun searchUsersByName(searchQuery: String): Flow<List<Passwords>>
+
+    @Query("SELECT * FROM Passwords ORDER BY editTime DESC")
+    suspend fun getAllPasswordsSync(): List<Passwords>
 }

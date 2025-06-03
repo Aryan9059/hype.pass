@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.LocalActivity
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -27,10 +28,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Backspace
 import androidx.compose.material.icons.filled.Fingerprint
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -60,8 +60,8 @@ fun BiometricScreen(
     var enteredPin by remember { mutableStateOf("") }
     var isPinWrong by remember { mutableStateOf(false) }
 
-    val context = LocalContext.current as ComponentActivity
-    val activity = LocalContext.current as FragmentActivity
+    val context = LocalActivity.current as ComponentActivity
+    val activity = LocalActivity.current as FragmentActivity
     val biometricAuthenticator = BiometricAuthenticator(context)
 
     val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
@@ -138,7 +138,7 @@ fun BiometricScreen(
                                 .clickable(
                                     enabled = !(digit == "F" && !isFingerprintEnabled),
                                     interactionSource = remember { MutableInteractionSource() },
-                                    indication = rememberRipple(color = if (digit == "B" || digit == "F") MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.onBackground)
+                                    indication = ripple(color = if (digit == "B" || digit == "F") MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.onBackground)
                                 ) {
                                     vibrator.vibrate(
                                         VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)

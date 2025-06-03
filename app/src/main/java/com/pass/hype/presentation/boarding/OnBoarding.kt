@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -23,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.paint
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -52,12 +51,10 @@ fun OnBoarding(modifier: Modifier, onClicked: () -> Unit, isBoarding: Boolean) {
             Column(modifier = Modifier.paint(painter = painterResource(R.drawable.onboard_bg), contentScale = ContentScale.FillBounds), verticalArrangement = Arrangement.SpaceBetween) {
                 Column(modifier.padding(24.dp)) {
                     Spacer(modifier = Modifier.size(64.dp))
-                    Card (modifier = Modifier.size(72.dp), shape = RoundedCornerShape(20.dp), colors = CardDefaults.cardColors().copy(containerColor = Color.Black)) {
-                        Image(modifier = Modifier.fillMaxSize().padding(12.dp), painter = painterResource(R.drawable.onboard_logo), contentDescription = "")
-                    }
+                    Image(modifier = Modifier.size(72.dp).clip(RoundedCornerShape(12.dp)), painter = painterResource(R.drawable.logo), contentDescription = "")
                     Text(
                         modifier = Modifier
-                            .padding(top = 12.dp),
+                            .padding(top = 20.dp),
                         color = Color.Black,
                         fontSize = 48.sp,
                         fontWeight = FontWeight.Bold,

@@ -29,7 +29,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.NavigateNext
 import androidx.compose.material.icons.automirrored.outlined.Backspace
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -40,6 +39,7 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -55,6 +55,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.core.content.edit
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -101,9 +102,9 @@ fun OnBoardPinScreen(
                             ),
                             onClick = {
                                 selectedIndex = index
-                                if (selectedIndex == 0) maxPinLength = 4
-                                else if(selectedIndex == 1) maxPinLength = 5
-                                else maxPinLength = 6
+                                maxPinLength = if (selectedIndex == 0) 4
+                                else if(selectedIndex == 1) 5
+                                else 6
                             },
                             selected = index == selectedIndex
                         ) {
@@ -171,7 +172,7 @@ fun OnBoardPinScreen(
                                 .clip(RoundedCornerShape(50))
                                 .clickable(
                                     interactionSource = remember { MutableInteractionSource() },
-                                    indication = rememberRipple(color = if (digit == "B" || digit == "F") MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.onBackground)
+                                    indication = ripple(color = if (digit == "B" || digit == "F") MaterialTheme.colorScheme.surfaceContainer else MaterialTheme.colorScheme.onBackground)
                                 ) {
                                     vibrator.vibrate(
                                         VibrationEffect.createPredefined(VibrationEffect.EFFECT_CLICK)
@@ -188,10 +189,30 @@ fun OnBoardPinScreen(
                                         } else if (confirmState && enteredPin.length == maxPinLength){
                                             Log.e("storedPin", storedPin)
                                             if (storedPin == enteredPin){
-                                                pinSharedPrefs.edit().putInt("pinLength", maxPinLength).apply()
-                                                pinSharedPrefs.edit().putString("stored_value", enteredPin).apply()
-                                                pinSharedPrefs.edit().putBoolean("isFingerprintEnabled", isFingerprintEnabled).apply()
-                                                onBoardSharedPrefs.edit().putString("isUserNew", "No").apply()
+                                                pinSharedPrefs.edit {
+                                                    putInt(
+                                                        "pinLength",
+                                                        maxPinLength
+                                                    )
+                                                }
+                                                pinSharedPrefs.edit {
+                                                    putString(
+                                                        "stored_value",
+                                                        enteredPin
+                                                    )
+                                                }
+                                                pinSharedPrefs.edit {
+                                                    putBoolean(
+                                                        "isFingerprintEnabled",
+                                                        isFingerprintEnabled
+                                                    )
+                                                }
+                                                onBoardSharedPrefs.edit {
+                                                    putString(
+                                                        "isUserNew",
+                                                        "No"
+                                                    )
+                                                }
                                                 navController.popBackStack()
                                                 navController.navigate("mainScreen")
                                             } else {

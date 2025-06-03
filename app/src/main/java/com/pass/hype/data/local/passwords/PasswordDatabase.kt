@@ -2,6 +2,7 @@ package com.pass.hype.data.local.passwords
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import kotlinx.coroutines.flow.Flow
 
 @Database(entities = [Passwords::class], version = 4, exportSchema = false)
 abstract class PasswordDatabase: RoomDatabase() {

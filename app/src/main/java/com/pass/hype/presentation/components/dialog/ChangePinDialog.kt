@@ -1,7 +1,5 @@
 package com.pass.hype.presentation.components.dialog
 
-import android.content.Context
-import android.content.SharedPreferences
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.core.text.isDigitsOnly
@@ -111,9 +108,9 @@ fun ChangePinDialog(
                                 ),
                                 onClick = {
                                     selectedIndex = index
-                                    if (selectedIndex == 0) maxPinLength = 4
-                                    else if(selectedIndex == 1) maxPinLength = 5
-                                    else maxPinLength = 6
+                                    maxPinLength = if (selectedIndex == 0) 4
+                                    else if(selectedIndex == 1) 5
+                                    else 6
                                 },
                                 selected = index == selectedIndex
                             ) {

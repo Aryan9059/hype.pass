@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.CreditCard
 import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Wallet
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -72,7 +72,7 @@ fun MainScreen(passwordViewModel: PasswordViewModel, cardViewModel: CardViewMode
     var selectedNavItem by rememberSaveable { mutableIntStateOf(0) }
     val navItemList = listOf(
         NavItem("Passwords", Icons.Default.Password),
-        NavItem("Cards", Icons.Default.CreditCard),
+        NavItem("Cards", Icons.Default.Wallet),
         NavItem("Settings", Icons.Default.Settings)
     )
 

@@ -47,6 +47,7 @@ import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import com.pass.hype.R
 import com.pass.hype.utils.appList
 
@@ -87,6 +88,7 @@ fun AddPasswordDialog(
     if (isOpen){
         AlertDialog (
             title = { Text(text = "Create Password") },
+            properties = DialogProperties(dismissOnClickOutside = false),
             onDismissRequest = onDismiss,
             text = {
             Column {
@@ -161,6 +163,7 @@ fun AddPasswordDialog(
                         onExpandedChange = { expanded = !expanded },
                         modifier = Modifier
                     ) {
+                        @Suppress("DEPRECATION")
                         OutlinedTextField(
                             value = app,
                             onValueChange = onAppChanged,

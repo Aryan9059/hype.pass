@@ -3,11 +3,13 @@ package com.pass.hype.presentation.settings
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.net.Uri
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -29,7 +31,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
+import androidx.core.net.toUri
 import com.pass.hype.presentation.components.SettingsTile
 import com.pass.hype.presentation.components.dialog.ChangePinDialog
 
@@ -60,8 +66,8 @@ fun SettingsScreen(modifier: Modifier) {
         onOldPinChanged = { oldPin = it },
         onNewPinChanged = { newPin = it },
         onChange = {
-            sharedPreferences.edit().putInt("pinLength", newPin.length).apply()
-            sharedPreferences.edit().putString("stored_value", newPin).apply()
+            sharedPreferences.edit { putInt("pinLength", newPin.length) }
+            sharedPreferences.edit { putString("stored_value", newPin) }
                    isChangePinDialogOpen = false},
         storedValue = pinStored)
 
@@ -76,18 +82,7 @@ fun SettingsScreen(modifier: Modifier) {
         }, horizontalAlignment = Alignment.CenterHorizontally){
         item {
             MediumTopAppBar(title = { Text(text = "Settings", style = MaterialTheme.typography.headlineLarge) })
-//            Spacer(modifier = Modifier.size(16.dp))
-//            Card(modifier = Modifier
-//                .size(160.dp), shape = RoundedCornerShape(24.dp), border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-//            ) {
-//                Image(painter = painterResource(id = R.drawable.logo), contentDescription = "hype.pass Logo")
-//            }
-//            Spacer(modifier = Modifier.size(16.dp))
-//            Text(text = "hype.pass", style = MaterialTheme.typography.headlineMedium)
-//            Spacer(modifier = Modifier.size(10.dp))
-//            Text(text = "Created with ❤️ by Aryan Srivastava", style = MaterialTheme.typography.bodyMedium)
-//
-//            Spacer(modifier = Modifier.size(16.dp))
+            Spacer(Modifier.size(16.dp))
 
             SettingsTile(
                 icon = Icons.Default.Pin,
@@ -110,11 +105,18 @@ fun SettingsScreen(modifier: Modifier) {
                 title = "Source Code",
                 summary = "View, improve & pull our source code",
                 onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Aryan9059/hype.pass"))
+                    val intent = Intent(Intent.ACTION_VIEW,
+                        "https://github.com/Aryan9059/hype.pass".toUri())
                     context.startActivity(intent)
                 }
             )
-            Spacer(modifier = Modifier.size(16.dp))
+            Spacer(modifier = Modifier.size(40.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                Text(text = "Created with ❤️ by ", style = MaterialTheme.typography.bodyMedium)
+                Text(text = "Aryan Srivastava", style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold))
+            }
+            Spacer(Modifier.size(4.dp))
+            Text(text = "Currently using v${context.packageManager.getPackageInfo(context.packageName, 0).versionName}", style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.outline, fontSize = 12.sp))
         }
     }
 }

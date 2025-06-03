@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package com.pass.hype.presentation.components.dialog
 
 import android.annotation.SuppressLint
@@ -18,7 +20,6 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,8 +32,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.OffsetMapping
 import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import com.pass.hype.utils.cardList
-import java.util.Calendar
 
 @SuppressLint("DiscouragedApi")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -81,6 +82,7 @@ fun AddCardDialog(
     if (isOpen){
         AlertDialog(
             title = { Text(text = if (edit) "Edit Card" else "Add a Card") },
+            properties = DialogProperties(dismissOnClickOutside = false),
             onDismissRequest = onDismissRequest,
             text = {
                 Column {

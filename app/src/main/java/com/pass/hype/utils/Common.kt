@@ -1,5 +1,13 @@
 package com.pass.hype.utils
 
+val appList = listOf(
+    "Amazon", "Apple", "ChatGPT", "Facebook", "GitHub", "Google", "Instagram",
+    "LinkedIn", "Microsoft", "Netflix", "Pinterest", "Reddit", "Snapchat",
+    "Spotify","TikTok", "X")
+
+val cardList = listOf(
+    "VISA", "MASTERCARD", "\uD83C\uDDFA\uD83C\uDDF8 EXPRESS", "OTHER")
+
 fun String.capitalizeWords(delimiter: String = " ") =
     split(delimiter).joinToString(delimiter) { word ->
 

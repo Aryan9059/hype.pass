@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("com.google.devtools.ksp")
+    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -12,8 +14,8 @@ android {
         applicationId = "com.pass.hype"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -43,6 +45,7 @@ android {
     }
     buildFeatures {
         compose = true
+        viewBinding = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.3"
@@ -67,6 +70,10 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.appcompat)
+    implementation(libs.firebase.auth)
+    implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
+    implementation(libs.googleid)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -106,4 +113,19 @@ dependencies {
     //Biometric Authentication
     implementation(libs.androidx.biometric)
     implementation(libs.roomdatabasebackup)
+
+    //RetroFit
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+
+    // Glance for App Widgets
+    implementation (libs.androidx.glance)
+    implementation (libs.androidx.glance.appwidget)
+
+    // WorkManager for background updates
+    implementation (libs.androidx.work.runtime.ktx)
+
+    // For network requests and JSON parsing
+    implementation (libs.okhttp)
+    implementation (libs.gson)
 }

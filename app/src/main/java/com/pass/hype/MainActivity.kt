@@ -1,6 +1,5 @@
 package com.pass.hype
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
@@ -18,6 +17,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
+import androidx.core.content.edit
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
@@ -33,7 +34,6 @@ import com.pass.hype.presentation.cards.CardViewModel
 import com.pass.hype.presentation.components.dialog.ChangePinDialog
 import com.pass.hype.presentation.passwords.PasswordViewModel
 import com.pass.hype.ui.theme.HypepassTheme
-import de.raphaelebner.roomdatabasebackup.core.RoomBackup
 
 class MainActivity : FragmentActivity() {
     @RequiresApi(Build.VERSION_CODES.Q)
@@ -47,13 +47,13 @@ class MainActivity : FragmentActivity() {
         setContent {
             HypepassTheme {
                 val pinSharedPrefs: SharedPreferences =
-                    LocalContext.current.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+                    LocalContext.current.getSharedPreferences("MyPrefs", MODE_PRIVATE)
                 val pinStored = pinSharedPrefs.getString("stored_value", "") ?: ""
                 val isFingerPrintEnabled = pinSharedPrefs.getBoolean("isFingerprintEnabled", false)
                 val length = pinSharedPrefs.getInt("pinLength" , 0)
 
                 val onBoardSharedPrefs: SharedPreferences =
-                    LocalContext.current.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
+                    LocalContext.current.getSharedPreferences("onBoarding", MODE_PRIVATE)
                 val isUserNew = onBoardSharedPrefs.getString("isUserNew", null)
                 var isBoarding by rememberSaveable {
                     mutableStateOf(true)
@@ -76,8 +76,8 @@ class MainActivity : FragmentActivity() {
                     onOldPinChanged = { oldPin = it.take(length) },
                     onNewPinChanged = { newPin = it.take(length) },
                     onChange = {
-                        pinSharedPrefs.edit().putString("stored_value", newPin).apply()
-                        onBoardSharedPrefs.edit().putString("isUserNew", "No").apply()
+                        pinSharedPrefs.edit { putString("stored_value", newPin) }
+                        onBoardSharedPrefs.edit { putString("isUserNew", "No") }
                         isBoarding = false
                         isChangePinDialogOpen = false},
                     storedValue = pinStored)
@@ -91,7 +91,7 @@ class MainActivity : FragmentActivity() {
                         title = "Unlock App",
                         subTitle = "Unlock to access your passwords",
                         negativeButtonText = "Use PIN",
-                        fragmentActivity = LocalContext.current as FragmentActivity,
+                        fragmentActivity = LocalView.current.context as FragmentActivity,
                         onSuccess = {
                             navController.popBackStack()
                             navController.navigate("mainScreen")

@@ -19,7 +19,7 @@ class HypePass: Application(){
             PasswordDatabase::class.java,
             "Passwords"
         )
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .build()
 
         cardDatabase = Room.databaseBuilder(
@@ -27,7 +27,7 @@ class HypePass: Application(){
             CardDatabase::class.java,
             "Cards"
         )
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .build()
     }
 }

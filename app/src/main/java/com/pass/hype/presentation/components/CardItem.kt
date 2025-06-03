@@ -1,5 +1,7 @@
 package com.pass.hype.presentation.components
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
 import android.util.Log
 import androidx.compose.animation.animateContentSize
@@ -48,10 +50,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.ClipboardManager
-import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -60,7 +60,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat.startActivity
 import androidx.core.graphics.toColorInt
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.pass.hype.R
@@ -211,7 +210,7 @@ fun CardItem(
         shape = RoundedCornerShape(16.dp)
     ) {
         Box {
-            val clipboardManager = LocalClipboardManager.current
+            val clipboardManager = LocalClipboard.current.nativeClipboard
             val context = LocalContext.current
 
             BankCardBackground(baseColor = Color(item.baseColor.toColorInt()))
@@ -302,7 +301,7 @@ fun CardItem(
                         type = "text/plain"
                     }
                     val shareIntent = Intent.createChooser(sendIntent, null)
-                    startActivity(context, shareIntent, null)
+                    context.startActivity(shareIntent)
                 },
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -320,7 +319,8 @@ fun CardItem(
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(6.dp),
-                onClick = { clipboardManager.setText(AnnotatedString(item.cardNumber)) },
+                onClick = { clipboardManager.setPrimaryClip(ClipData.newPlainText("Card Number", item.cardNumber))
+                 },
                 shape = RoundedCornerShape(50)
             ) {
                 Icon(modifier = Modifier
@@ -465,7 +465,7 @@ fun BankCardLabelAndText(label: String, text: String, clipboardManager: Clipboar
         modifier = Modifier
             .wrapContentSize()
             .clickable {
-                clipboardManager.setText(AnnotatedString(text))
+                clipboardManager.setPrimaryClip(ClipData.newPlainText("Card Number", text))
             },
         verticalArrangement = Arrangement.SpaceBetween
     ) {
