@@ -51,7 +51,7 @@ fun OnBoarding(modifier: Modifier, onClicked: () -> Unit, isBoarding: Boolean) {
             Column(modifier = Modifier.paint(painter = painterResource(R.drawable.onboard_bg), contentScale = ContentScale.FillBounds), verticalArrangement = Arrangement.SpaceBetween) {
                 Column(modifier.padding(24.dp)) {
                     Spacer(modifier = Modifier.size(64.dp))
-                    Image(modifier = Modifier.size(72.dp).clip(RoundedCornerShape(12.dp)), painter = painterResource(R.drawable.logo), contentDescription = "")
+                    Image(modifier = Modifier.size(72.dp).clip(RoundedCornerShape(16.dp)), painter = painterResource(R.drawable.logo), contentDescription = "")
                     Text(
                         modifier = Modifier
                             .padding(top = 20.dp),

@@ -14,6 +14,7 @@ class HypePass: Application(){
 
     override fun onCreate() {
         super.onCreate()
+
         passwordDatabase = Room.databaseBuilder(
             applicationContext,
             PasswordDatabase::class.java,

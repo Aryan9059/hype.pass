@@ -21,14 +21,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AlternateEmail
-import androidx.compose.material.icons.filled.CopyAll
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Password
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -73,7 +65,7 @@ import com.pass.hype.presentation.passwords.PasswordViewModel
 import com.pass.hype.utils.appList
 import com.pass.hype.utils.capitalizeWords
 import com.pass.hype.utils.generateStrongPassword
-import com.pass.hype.utils.isStrongPassword
+import com.pass.hype.utils.getPasswordStrength
 import kotlinx.coroutines.launch
 
 @SuppressLint("DiscouragedApi")
@@ -128,12 +120,7 @@ fun PasswordItem(
         onPasswordChanged = {password = it},
         onAppChanged = {app = it},
         onCreateClick = {password = generateStrongPassword()},
-        passStrength =
-            if (password.isStrongPassword() == 0 || password.length <= 4) "Weakest"
-            else if (password.isStrongPassword() == 1 || password.length <= 8) "Weak"
-            else if (password.isStrongPassword() == 2 || password.length <= 12) "Moderate"
-            else if (password.isStrongPassword() == 3 || password.length <= 16) "Strong"
-            else "Strongest"
+        passStrength = password.getPasswordStrength()
     )
 
     val alphaAnimation = remember { Animatable(initialValue = 0f) }
@@ -245,7 +232,7 @@ fun PasswordItem(
                     Icon(modifier = Modifier
                         .size(36.dp)
                         .padding(8.dp),
-                        imageVector = Icons.Default.Share,
+                        painter = painterResource(R.drawable.share),
                         contentDescription = "Share Password")
                 }
                 OutlinedCard(onClick = {
@@ -257,7 +244,7 @@ fun PasswordItem(
                     Icon(modifier = Modifier
                         .size(36.dp)
                         .padding(8.dp),
-                        imageVector = Icons.Default.Edit,
+                        painter = painterResource(R.drawable.edit),
                         contentDescription = "Edit Password")
                 }
             }
@@ -265,6 +252,7 @@ fun PasswordItem(
             if(expandedState){
                 OutlinedTextField(
                     value = item.email,
+                    shape = RoundedCornerShape(12.dp),
                     onValueChange = {
                         item.email = it},
                     label = { Text(text = "Email/UserID")},
@@ -278,11 +266,11 @@ fun PasswordItem(
                         IconButton(onClick = {
                             clipboardManager.setPrimaryClip(ClipData.newPlainText("Card Number", item.email))
                         }) {
-                            Icon(imageVector = Icons.Default.CopyAll, contentDescription = "Copy Email")
+                            Icon(painter = painterResource(R.drawable.copy), contentDescription = "Copy Email", modifier = Modifier.size(24.dp))
                         }
                     },
                     leadingIcon = {
-                        Icon(imageVector = Icons.Default.AlternateEmail, contentDescription = "Email")
+                        Icon(painter = painterResource(R.drawable.email), contentDescription = "Email", modifier = Modifier.size(24.dp))
                     }
                 )
 
@@ -290,37 +278,35 @@ fun PasswordItem(
 
                 OutlinedTextField(
                     value = item.password,
+                    shape = RoundedCornerShape(12.dp),
                     onValueChange = {item.password = it},
                     label = { Text(text = "Password")},
                     readOnly = true,
                     visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
                     modifier = Modifier
-                        .padding(top = 12.dp, bottom = 8.dp)
+                        .padding(top = 6.dp, bottom = 12.dp)
                         .fillMaxWidth(),
                     singleLine = true,
                     textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.password))),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
-                        val image = if (passwordVisibility)
-                            Icons.Default.VisibilityOff
-                        else Icons.Default.Visibility
+                        val image = if (passwordVisibility) R.drawable.eye_close else R.drawable.eye_open
 
                         val description = if (passwordVisibility) "Hide Password" else "Show Password"
 
                         IconButton(onClick = {passwordVisibility = !passwordVisibility}){
-                            Icon(imageVector = image, description)
+                            Icon(painter = painterResource(image), description, modifier = Modifier.size(20.dp))
                         }
                     },
                     leadingIcon = {
-                        Icon(imageVector = Icons.Default.Password, contentDescription = "Password Text Box Icon")
+                        Icon(painter = painterResource(R.drawable.password), contentDescription = "Password Text Box Icon", modifier = Modifier.size(24.dp))
                     }
                 )
 
                 if(item.notes != "") {
-                    Spacer(modifier = Modifier.size(8.dp))
-
                     OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp),
+                        shape = RoundedCornerShape(12.dp),
                         value = notes,
                         readOnly = true,
                         onValueChange = { item.notes = it },
@@ -334,11 +320,7 @@ fun PasswordItem(
             Row (modifier = Modifier.align(Alignment.End).fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)){
                 Card(Modifier.align(Alignment.Bottom).padding(bottom = 4.dp), shape = RoundedCornerShape(21.dp), colors = CardDefaults.cardColors()) {
                     Text(
-                        text = if (password.isStrongPassword() == 0 || password.length <= 4) "WEAKEST"
-                    else if (password.isStrongPassword() == 1 || password.length <= 8) "WEAK"
-                    else if (password.isStrongPassword() == 2 || password.length <= 12) "MODERATE"
-                    else if (password.isStrongPassword() == 3 || password.length <= 16) "STRONG"
-                    else "STRONGEST",
+                        text = password.getPasswordStrength().uppercase(),
                         Modifier.padding(horizontal = 14.dp, vertical = 3.dp), fontSize = 14.sp, fontFamily = FontFamily(Font(R.font.password))
                     )
                 }

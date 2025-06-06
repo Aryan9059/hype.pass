@@ -25,20 +25,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.NavigateNext
-import androidx.compose.material.icons.automirrored.outlined.Backspace
-import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -50,12 +49,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
+import androidx.compose.ui.window.DialogProperties
 import androidx.core.content.edit
+import androidx.navigation.NavController
+import com.pass.hype.R
+import com.pass.hype.utils.generateStrongRecoveryKey
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -77,6 +82,90 @@ fun OnBoardPinScreen(
 
     val pinSharedPrefs: SharedPreferences = LocalContext.current.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
     val onBoardSharedPrefs: SharedPreferences = LocalContext.current.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
+    val recoveryKey = generateStrongRecoveryKey()
+    var enteredRecoveryKey by remember { mutableStateOf("") }
+
+    var showRecoveryScreen by remember { mutableStateOf(false) }
+    if (showRecoveryScreen) {
+        AlertDialog(
+            onDismissRequest = { showRecoveryScreen = false },
+            title = { Text(text = "Recovery Key") },
+            properties = DialogProperties(dismissOnClickOutside = false),
+            text = {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ){
+                    Text(modifier = Modifier.fillMaxWidth(), text = "You need to remember this recovery key since it is needed in case you forget your PIN.", textAlign = TextAlign.Start, style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface.copy(0.8f)))
+                    Spacer(modifier = Modifier.size(18.dp))
+
+                    Card(
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors().copy(containerColor = MaterialTheme.colorScheme.surface)
+                    ) {
+                        Text(text = recoveryKey,
+                            textAlign = TextAlign.Center,
+                            style = MaterialTheme.typography.headlineSmall.copy(color = MaterialTheme.colorScheme.onSurface, fontWeight = FontWeight.Bold),
+                            modifier = Modifier.padding(16.dp).fillMaxWidth(),
+                            fontFamily = FontFamily(Font(R.font.password)),
+                        )
+                    }
+
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                        value = enteredRecoveryKey,
+                        onValueChange = { enteredRecoveryKey = it },
+                        label = { Text(text = "Confirm Key") },
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp),
+                        isError = enteredRecoveryKey != recoveryKey,
+                        )
+                }
+                   },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showRecoveryScreen = false
+                        pinSharedPrefs.edit {
+                            putInt(
+                                "pinLength",
+                                maxPinLength
+                            )
+                        }
+                        pinSharedPrefs.edit {
+                            putString(
+                                "stored_value",
+                                enteredPin
+                            )
+                        }
+                        pinSharedPrefs.edit {
+                            putBoolean(
+                                "isFingerprintEnabled",
+                                isFingerprintEnabled
+                            )
+                        }
+                        onBoardSharedPrefs.edit {
+                            putString(
+                                "isUserNew",
+                                "No"
+                            )
+                        }
+                        onBoardSharedPrefs.edit {
+                            putString(
+                                "RecoveryKey",
+                                recoveryKey
+                            )
+                        }
+                        navController.popBackStack()
+                        navController.navigate("mainScreen")
+                    },
+                    enabled = enteredRecoveryKey == recoveryKey
+                ) {
+                    Text(text = "Done")
+                }
+            }
+        )
+    }
 
     Box(
         modifier = Modifier
@@ -98,7 +187,8 @@ fun OnBoardPinScreen(
                             modifier = Modifier.width(100.dp),
                             shape = SegmentedButtonDefaults.itemShape(
                                 index = index,
-                                count = options.size
+                                count = options.size,
+                                baseShape = RoundedCornerShape(12.dp)
                             ),
                             onClick = {
                                 selectedIndex = index
@@ -116,9 +206,9 @@ fun OnBoardPinScreen(
             Spacer(modifier = Modifier.size(24.dp))
 
             if (isFingerprintAvailable(LocalContext.current)) {
-                Card(Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(bottom = 24.dp), shape = RoundedCornerShape(28.dp), colors = CardDefaults.cardColors().copy(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
+                Card(Modifier.fillMaxWidth().padding(horizontal = 24.dp).padding(bottom = 24.dp), shape = RoundedCornerShape(28.dp), colors = CardDefaults.cardColors().copy(containerColor = MaterialTheme.colorScheme.secondaryContainer)) {
                     Row {
-                        Text(text = "Enable Fingerprint", color = MaterialTheme.colorScheme.onPrimaryContainer, fontSize = 18.sp, modifier = Modifier.align(Alignment.CenterVertically).padding(start = 20.dp))
+                        Text(text = "Enable Fingerprint", color = MaterialTheme.colorScheme.primary, fontSize = 18.sp, modifier = Modifier.align(Alignment.CenterVertically).padding(start = 20.dp))
                         Spacer(Modifier.weight(1F))
                         Switch(modifier = Modifier.padding(vertical = 12.dp).padding(end = 20.dp), checked = isFingerprintEnabled, onCheckedChange = {
                             isFingerprintEnabled = it
@@ -189,32 +279,7 @@ fun OnBoardPinScreen(
                                         } else if (confirmState && enteredPin.length == maxPinLength){
                                             Log.e("storedPin", storedPin)
                                             if (storedPin == enteredPin){
-                                                pinSharedPrefs.edit {
-                                                    putInt(
-                                                        "pinLength",
-                                                        maxPinLength
-                                                    )
-                                                }
-                                                pinSharedPrefs.edit {
-                                                    putString(
-                                                        "stored_value",
-                                                        enteredPin
-                                                    )
-                                                }
-                                                pinSharedPrefs.edit {
-                                                    putBoolean(
-                                                        "isFingerprintEnabled",
-                                                        isFingerprintEnabled
-                                                    )
-                                                }
-                                                onBoardSharedPrefs.edit {
-                                                    putString(
-                                                        "isUserNew",
-                                                        "No"
-                                                    )
-                                                }
-                                                navController.popBackStack()
-                                                navController.navigate("mainScreen")
+                                                showRecoveryScreen = true
                                             } else {
                                                 notMatch = true
                                                 enteredPin = ""
@@ -230,8 +295,8 @@ fun OnBoardPinScreen(
                                     "B" -> {
                                         Icon(
                                             tint = MaterialTheme.colorScheme.onPrimary,
-                                            modifier = Modifier.align(Alignment.Center),
-                                            imageVector = Icons.AutoMirrored.Outlined.Backspace,
+                                            modifier = Modifier.align(Alignment.Center).size(32.dp).padding(end = 2.dp),
+                                            painter = painterResource(R.drawable.backspace),
                                             contentDescription = "BackSpace"
                                         )
                                     }
@@ -241,7 +306,7 @@ fun OnBoardPinScreen(
                                             modifier = Modifier
                                                 .size(32.dp)
                                                 .align(Alignment.Center),
-                                            imageVector = if(!confirmState) Icons.AutoMirrored.Filled.NavigateNext else Icons.Default.Done,
+                                            painter = if(!confirmState) painterResource(R.drawable.next) else painterResource(R.drawable.done),
                                             contentDescription = "Next"
                                         )
                                     }

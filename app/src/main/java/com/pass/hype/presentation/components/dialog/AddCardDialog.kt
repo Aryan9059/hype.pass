@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuItem
@@ -90,6 +91,7 @@ fun AddCardDialog(
                     Spacer(modifier = Modifier.size(6.dp))
 
                     OutlinedTextField(
+                        shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.fillMaxWidth(),
                         value = cardName,
                         onValueChange = onNameChanged,
@@ -104,6 +106,7 @@ fun AddCardDialog(
                     Spacer(modifier = Modifier.size(6.dp))
 
                     OutlinedTextField(
+                        shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.fillMaxWidth(),
                         value = cardNumber,
                         visualTransformation = { number ->
@@ -120,6 +123,7 @@ fun AddCardDialog(
                     Row {
 
                         OutlinedTextField(
+                            shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.weight(1F),
                             value = cvv,
                             onValueChange = onCvvChanged,
@@ -136,6 +140,7 @@ fun AddCardDialog(
                             modifier = Modifier.weight(1.8F)
                         ) {
                             OutlinedTextField(
+                                shape = RoundedCornerShape(12.dp),
                                 value = company,
                                 onValueChange = onCompanyChanged,
                                 readOnly = true,
@@ -172,6 +177,7 @@ fun AddCardDialog(
 
                     Row {
                         OutlinedTextField(
+                            shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.weight(1F),
                             value = if (month <= 12) expiryMonth else "12",
                             onValueChange = onExpiryMonthChanged,
@@ -183,6 +189,7 @@ fun AddCardDialog(
                         Spacer(modifier = Modifier.size(12.dp))
 
                         OutlinedTextField(
+                            shape = RoundedCornerShape(12.dp),
                             modifier = Modifier.weight(1F),
                             value = expiryYear,
                             onValueChange = onExpiryYearChanged,

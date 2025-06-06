@@ -3,7 +3,9 @@ package com.pass.hype.data.local.passwords
 import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.RawQuery
 import androidx.room.Upsert
+import androidx.sqlite.db.SimpleSQLiteQuery
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -26,4 +28,7 @@ interface PasswordDao {
 
     @Query("SELECT * FROM Passwords ORDER BY editTime DESC")
     suspend fun getAllPasswordsSync(): List<Passwords>
+
+    @RawQuery
+    suspend fun executeQuery(query: SimpleSQLiteQuery): List<Any>
 }

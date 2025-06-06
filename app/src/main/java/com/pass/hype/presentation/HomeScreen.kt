@@ -1,5 +1,7 @@
 package com.pass.hype.presentation
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Row
@@ -7,11 +9,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Password
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.Wallet
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.BottomAppBarDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,6 +31,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.pass.hype.R
 import com.pass.hype.data.local.cards.Cards
@@ -45,11 +44,13 @@ import com.pass.hype.presentation.components.dialog.AddCardDialog
 import com.pass.hype.presentation.components.dialog.AddPasswordDialog
 import com.pass.hype.presentation.passwords.PasswordViewModel
 import com.pass.hype.presentation.passwords.PasswordsScreen
+import com.pass.hype.presentation.recovery.RecoveryScreen
 import com.pass.hype.presentation.settings.SettingsScreen
 import com.pass.hype.utils.generateStrongPassword
-import com.pass.hype.utils.isStrongPassword
+import com.pass.hype.utils.getPasswordStrength
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(passwordViewModel: PasswordViewModel, cardViewModel: CardViewModel) {
@@ -71,9 +72,9 @@ fun MainScreen(passwordViewModel: PasswordViewModel, cardViewModel: CardViewMode
 
     var selectedNavItem by rememberSaveable { mutableIntStateOf(0) }
     val navItemList = listOf(
-        NavItem("Passwords", Icons.Default.Password),
-        NavItem("Cards", Icons.Default.Wallet),
-        NavItem("Settings", Icons.Default.Settings)
+        NavItem("Passwords", painterResource(R.drawable.password)),
+        NavItem("Cards", painterResource(R.drawable.card)),
+        NavItem("Settings", painterResource(R.drawable.settings))
     )
 
     val bottomAppScrollBehavior = BottomAppBarDefaults.exitAlwaysScrollBehavior()
@@ -102,19 +103,19 @@ fun MainScreen(passwordViewModel: PasswordViewModel, cardViewModel: CardViewMode
                     Row(Modifier.padding(horizontal = 12.dp)) {
                         if (selectedNavItem == 0) {
                             Icon(
-                                painter = painterResource(R.drawable.create_icon),
+                                painter = painterResource(R.drawable.create),
                                 modifier = Modifier.size(20.dp),
                                 contentDescription = "Add Password"
                             )
                         } else {
                             Icon(
-                                imageVector = Icons.Default.Add,
+                                painter = painterResource(R.drawable.add),
                                 modifier = Modifier.size(20.dp),
                                 contentDescription = "Add Card"
                             )
                         }
                         Spacer(Modifier.width(8.dp))
-                        Text(text = if (selectedNavItem == 0) "Create Password" else "Add a Card")
+                        Text(text = if (selectedNavItem == 0) "Add Password" else "Add Card", fontFamily = FontFamily(Font(R.font.password)))
                     }
                 }
             }
@@ -125,7 +126,7 @@ fun MainScreen(passwordViewModel: PasswordViewModel, cardViewModel: CardViewMode
                     NavigationBarItem(
                         selected = selectedNavItem == index,
                         onClick = { selectedNavItem = index },
-                        icon = { Icon(imageVector = navItem.icon, contentDescription = navItem.label) },
+                        icon = { Icon(modifier = Modifier.size(24.dp),painter = navItem.icon, contentDescription = navItem.label) },
                         label = { Text(text = navItem.label) }
                     )
                 }
@@ -195,13 +196,7 @@ fun MainScreen(passwordViewModel: PasswordViewModel, cardViewModel: CardViewMode
     )
 
     AddPasswordDialog(
-        passStrength = when {
-            password.isStrongPassword() == 0 || password.length <= 4 -> "Weakest"
-            password.isStrongPassword() == 1 || password.length <= 8 -> "Weak"
-            password.isStrongPassword() == 2 || password.length <= 12 -> "Moderate"
-            password.isStrongPassword() == 3 || password.length <= 16 -> "Strong"
-            else -> "Strongest"
-        },
+        passStrength = password.getPasswordStrength(),
         app = app,
         email = email,
         isOpen = isAddPasswordOpen,
@@ -244,6 +239,7 @@ fun MainScreen(passwordViewModel: PasswordViewModel, cardViewModel: CardViewMode
     )
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun SelectedScreen(modifier: Modifier = Modifier, selectedIndex: Int, passwordViewModel: PasswordViewModel, cardViewModel: CardViewModel){
     when(selectedIndex){

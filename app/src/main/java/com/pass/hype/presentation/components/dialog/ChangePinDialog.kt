@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -74,37 +76,16 @@ fun ChangePinDialog(
             title = { Text(text = if (isStart) "Set App Pin" else "Change App Pin") },
             text = {
                 Column {
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = oldPin.take(storedValue.length),
-                        onValueChange = onOldPinChanged,
-                        label = { Text(text = if(isStart) "Enter Pin" else "Old Pin") },
-                        singleLine = true,
-                        maxLines = 1,
-                        isError = oldPinError != null && oldPin.isNotBlank(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-
-                    )
-                    Spacer(modifier = Modifier.size(6.dp))
-                    OutlinedTextField(
-                        modifier = Modifier.fillMaxWidth(),
-                        value = newPin.take(maxPinLength),
-                        onValueChange = onNewPinChanged,
-                        label = { Text(text = if (isStart) "Confirm Pin" else "New Pin") },
-                        singleLine = true,
-                        maxLines = 1,
-                        isError = newPinError != null && newPin.isNotBlank(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
-                    )
-
                     Spacer(modifier = Modifier.size(8.dp))
                     SingleChoiceSegmentedButtonRow {
                         options.forEachIndexed { index, label ->
                             SegmentedButton(
                                 modifier = Modifier.width(100.dp),
+                                colors = SegmentedButtonDefaults.colors().copy(inactiveContainerColor = MaterialTheme.colorScheme.surfaceContainer),
                                 shape = SegmentedButtonDefaults.itemShape(
                                     index = index,
-                                    count = options.size
+                                    count = options.size,
+                                    baseShape = RoundedCornerShape(12.dp)
                                 ),
                                 onClick = {
                                     selectedIndex = index
@@ -118,6 +99,33 @@ fun ChangePinDialog(
                             }
                         }
                     }
+
+                    Spacer(modifier = Modifier.size(8.dp))
+
+                    OutlinedTextField(
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        value = oldPin.take(storedValue.length),
+                        onValueChange = onOldPinChanged,
+                        label = { Text(text = if(isStart) "Enter Pin" else "Old Pin") },
+                        singleLine = true,
+                        maxLines = 1,
+                        isError = oldPinError != null && oldPin.isNotBlank(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+
+                    )
+                    Spacer(modifier = Modifier.size(6.dp))
+                    OutlinedTextField(
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier.fillMaxWidth(),
+                        value = newPin.take(maxPinLength),
+                        onValueChange = onNewPinChanged,
+                        label = { Text(text = if (isStart) "Confirm Pin" else "New Pin") },
+                        singleLine = true,
+                        maxLines = 1,
+                        isError = newPinError != null && newPin.isNotBlank(),
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    )
                 }
             },
             dismissButton = {

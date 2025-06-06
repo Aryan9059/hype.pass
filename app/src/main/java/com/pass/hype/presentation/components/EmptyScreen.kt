@@ -19,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.pass.hype.R
 
@@ -46,9 +48,9 @@ fun EmptyScreen(modifier: Modifier, screenText: String) {
                 modifier = Modifier.size(196.dp)
             )
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "It's all empty here!", style = MaterialTheme.typography.titleLarge)
+            Text(text = "It's all empty here!", fontFamily = FontFamily(Font(R.font.password)), style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(6.dp))
-            Text(text = screenText, style = MaterialTheme.typography.bodyMedium)
+            Text(text = screenText, style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)))
         }
     }
 }

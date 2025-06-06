@@ -14,8 +14,8 @@ android {
         applicationId = "com.pass.hype"
         minSdk = 24
         targetSdk = 35
-        versionCode = 2
-        versionName = "2.5"
+        versionCode = 3
+        versionName = "3.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -113,19 +113,8 @@ dependencies {
     //Biometric Authentication
     implementation(libs.androidx.biometric)
     implementation(libs.roomdatabasebackup)
-
-    //RetroFit
-    implementation (libs.retrofit)
-    implementation (libs.converter.gson)
-
-    // Glance for App Widgets
-    implementation (libs.androidx.glance)
-    implementation (libs.androidx.glance.appwidget)
+    implementation(libs.androidx.security.crypto)
 
     // WorkManager for background updates
     implementation (libs.androidx.work.runtime.ktx)
-
-    // For network requests and JSON parsing
-    implementation (libs.okhttp)
-    implementation (libs.gson)
 }

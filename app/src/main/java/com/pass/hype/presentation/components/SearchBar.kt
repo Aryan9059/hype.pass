@@ -26,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -62,7 +63,7 @@ fun SearchBar(
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(modifier = Modifier.size(40.dp).padding(start = 16.dp), imageVector = Icons.Default.Search, contentDescription = "Close Button")
+        Icon(modifier = Modifier.size(40.dp).padding(start = 16.dp), painter = painterResource(R.drawable.search), contentDescription = "Close Button")
         BasicTextField(
             modifier = modifier
                 .weight(5f)

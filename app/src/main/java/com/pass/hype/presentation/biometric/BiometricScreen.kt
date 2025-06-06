@@ -2,6 +2,7 @@
 
 package com.pass.hype.presentation.biometric
 
+import android.content.ClipData
 import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
@@ -24,30 +25,34 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.outlined.Backspace
-import androidx.compose.material.icons.filled.Fingerprint
-import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
+import com.pass.hype.R
+import com.pass.hype.utils.RecoveryKeyAlertDialog
 
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
@@ -74,6 +79,13 @@ fun BiometricScreen(
         )
     }
 
+    var showRecoveryDialog by rememberSaveable { mutableStateOf(false) }
+    if(showRecoveryDialog) {
+        RecoveryKeyAlertDialog(context) {
+            showRecoveryDialog = false
+        }
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -87,10 +99,10 @@ fun BiometricScreen(
         ) {
             Icon(modifier = Modifier
                 .padding(16.dp)
-                .size(36.dp), imageVector = Icons.Default.Lock, contentDescription = "Lock Icon", tint = MaterialTheme.colorScheme.onBackground)
+                .size(36.dp), painter = painterResource(R.drawable.lock), contentDescription = "Lock Icon", tint = MaterialTheme.colorScheme.onBackground)
             Text(text = "Unlock to use hype.pass", style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onBackground))
             Spacer(modifier = Modifier.size(4.dp))
-            Text(text = if(isPinWrong) "The pin you entered is incorrect, try again" else "Use Pin or Fingerprint to unlock the app", style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onBackground))
+            Text(text = if(isPinWrong) "The pin you entered is incorrect, try again" else "Use Pin or Fingerprint to unlock the app", style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)))
             Spacer(modifier = Modifier.size(36.dp))
 
             Row(
@@ -104,7 +116,7 @@ fun BiometricScreen(
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.secondary
+                            color = MaterialTheme.colorScheme.tertiary
                         )
                     )
                 }
@@ -151,7 +163,7 @@ fun BiometricScreen(
                                         "F" -> {
                                             biometricAuthenticator.promptBiometricAuth(
                                                 title = "Unlock App",
-                                                subTitle = "Unlock to access your passwords",
+                                                subTitle = "Unlock to access Passwords & Cards",
                                                 negativeButtonText = "Use PIN",
                                                 fragmentActivity = activity,
                                                 onSuccess = {
@@ -185,8 +197,8 @@ fun BiometricScreen(
                                     "B" -> {
                                         Icon(
                                             tint = MaterialTheme.colorScheme.onPrimary,
-                                            modifier = Modifier.align(Alignment.Center),
-                                            imageVector = Icons.AutoMirrored.Outlined.Backspace,
+                                            modifier = Modifier.align(Alignment.Center).size(32.dp).padding(end = 2.dp),
+                                            painter = painterResource(R.drawable.backspace),
                                             contentDescription = "BackSpace"
                                         )
                                     }
@@ -196,7 +208,7 @@ fun BiometricScreen(
                                             modifier = Modifier
                                                 .size(32.dp)
                                                 .align(Alignment.Center),
-                                            imageVector = Icons.Default.Fingerprint,
+                                            painter = painterResource(R.drawable.fingerprint),
                                             contentDescription = "Use FingerPrint"
                                         )
                                     }
@@ -215,6 +227,17 @@ fun BiometricScreen(
                             }
                         }
                     }
+                }
+
+                Button(onClick = {
+                    showRecoveryDialog = true
+                },
+                    modifier = Modifier
+                        .padding(top = 20.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.tertiary
+                    )) {
+                    Text(text = "Forgot PIN?")
                 }
             }
         }

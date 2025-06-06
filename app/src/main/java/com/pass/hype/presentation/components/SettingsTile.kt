@@ -20,14 +20,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.edit
+import com.pass.hype.ui.theme.HypepassTheme
 
 @Composable
 fun SettingsTile(
-    icon: ImageVector,
+    icon: Painter,
     title: String,
     summary: String? = null,
     onClick: () -> Unit = {}
@@ -46,7 +49,7 @@ fun SettingsTile(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
-            imageVector = icon,
+            painter = icon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.size(24.dp)
@@ -59,7 +62,7 @@ fun SettingsTile(
         ) {
             Text(
                 text = title,
-                style = MaterialTheme.typography.headlineSmall.copy(fontSize = 18.sp),
+                style = MaterialTheme.typography.headlineSmall.copy(fontSize = 16.sp),
                 color = MaterialTheme.colorScheme.onSurface
             )
 
@@ -77,7 +80,7 @@ fun SettingsTile(
         if (title == "Enable Fingerprint") {
             Switch(checked = isFingerprintEnabledCopy, onCheckedChange = {
                 isFingerprintEnabledCopy = it
-                pinSharedPrefs.edit().putBoolean("isFingerprintEnabled", it).apply()
+                pinSharedPrefs.edit { putBoolean("isFingerprintEnabled", it) }
             })
         }
     }

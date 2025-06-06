@@ -1,6 +1,8 @@
 package com.pass.hype.presentation.components.dialog
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,10 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AlternateEmail
-import androidx.compose.material.icons.filled.Android
-import androidx.compose.material.icons.filled.Password
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
@@ -73,6 +71,19 @@ fun AddPasswordDialog(
     var passwordError by rememberSaveable { mutableStateOf<String?>(null) }
     var expand by rememberSaveable { mutableStateOf(false) }
 
+    val targetValue = when (passStrength) {
+        "Very Weak" -> 0F
+        "Weak" -> 0.25F
+        "Fair" -> 0.5F
+        "Good" -> 0.75F
+        else -> 1F
+    }
+    val animatedProgress = animateFloatAsState(
+        targetValue = targetValue,
+        animationSpec = tween(durationMillis = 500),
+        label = "Progress Animation"
+    )
+
     emailError = when {
         email.isBlank() -> "Please enter your Email/UserID."
         else -> null
@@ -102,40 +113,33 @@ fun AddPasswordDialog(
                 ) {
                     Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                         Column {
-                            Text(
+                            Icon(
+                                painter = painterResource(R.drawable.password),
+                                contentDescription = "Password Strength Icon",
                                 modifier = Modifier
-                                    .padding(bottom = 4.dp)
+                                    .size(28.dp)
                                     .align(Alignment.CenterHorizontally),
-                                text = "Password Strength",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                fontSize = 12.sp
                             )
                             Text(
                                 modifier = Modifier
-                                    .padding(bottom = 6.dp)
+                                    .padding(top = 6.dp, bottom = 4.dp)
                                     .align(Alignment.CenterHorizontally),
                                 text = passStrength,
+                                fontFamily = FontFamily(Font(R.font.password)),
                                 fontSize = 28.sp,
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
                                 modifier = Modifier
-                                    .align(Alignment.CenterHorizontally),
+                                    .align(Alignment.CenterHorizontally)
+                                    .padding(bottom = 10.dp),
                                 text = "$length characters",
-                                color = MaterialTheme.colorScheme.primary,
-                                fontSize = 12.sp
+                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.7f),
+                                fontSize = 14.sp
                             )
                         }
                         CircularProgressIndicator(
-                            progress = {
-                                when (passStrength) {
-                                    "Weakest" -> 0F
-                                    "Weak" -> 0.25F
-                                    "Moderate" -> 0.5F
-                                    "Strong" -> 0.75F
-                                    else -> 1F
-                                }
-                            },
+                            progress = { animatedProgress.value },
                             strokeWidth = 12.dp,
                             strokeCap = StrokeCap.Round,
                             trackColor = MaterialTheme.colorScheme.background,
@@ -165,6 +169,7 @@ fun AddPasswordDialog(
                     ) {
                         @Suppress("DEPRECATION")
                         OutlinedTextField(
+                            shape = RoundedCornerShape(12.dp),
                             value = app,
                             onValueChange = onAppChanged,
                             label = { Text(text = "Select App") },
@@ -175,8 +180,9 @@ fun AddPasswordDialog(
                             leadingIcon = {
                                 if (!appList.contains(app)) {
                                     Icon(
-                                        imageVector = Icons.Default.Android,
-                                        contentDescription = "App Icon"
+                                        painter = painterResource(R.drawable.app),
+                                        contentDescription = "App Icon",
+                                        Modifier.size(24.dp)
                                     )
                                 } else {
                                     Icon(
@@ -213,6 +219,7 @@ fun AddPasswordDialog(
                     Spacer(modifier = Modifier.size(6.dp))
 
                     OutlinedTextField(
+                        shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.fillMaxWidth(),
                         value = email,
                         onValueChange = onEmailChanged,
@@ -221,8 +228,9 @@ fun AddPasswordDialog(
                         maxLines = 1,
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Default.AlternateEmail,
-                                contentDescription = "Email"
+                                painter = painterResource(R.drawable.email),
+                                contentDescription = "Email",
+                                Modifier.size(24.dp)
                             )
                         },
                         isError = emailError != null && email.isNotBlank(),
@@ -231,6 +239,7 @@ fun AddPasswordDialog(
                     Spacer(modifier = Modifier.size(6.dp))
 
                     OutlinedTextField(
+                        shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.fillMaxWidth(),
                         value = password,
                         onValueChange = onPasswordChanged,
@@ -241,8 +250,8 @@ fun AddPasswordDialog(
                         trailingIcon = {
                             IconButton(onClick = onCreateClick) {
                                 Icon(
-                                    modifier = Modifier.size(20.dp),
-                                    painter = painterResource(R.drawable.create_icon),
+                                    modifier = Modifier.size(24.dp),
+                                    painter = painterResource(R.drawable.create),
                                     contentDescription = "Create Password"
                                 )
                             }
@@ -250,8 +259,9 @@ fun AddPasswordDialog(
                         isError = passwordError != null && password.isNotBlank(),
                         leadingIcon = {
                             Icon(
-                                imageVector = Icons.Default.Password,
-                                contentDescription = "Password Text Box Icon"
+                                painter = painterResource(R.drawable.password),
+                                contentDescription = "Password Text Box Icon",
+                                Modifier.size(24.dp)
                             )
                         }
                     )
@@ -259,6 +269,7 @@ fun AddPasswordDialog(
                     Spacer(modifier = Modifier.size(6.dp))
 
                     OutlinedTextField(
+                        shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.fillMaxWidth(),
                         value = notes,
                         onValueChange = onNotesChanged,

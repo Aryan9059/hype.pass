@@ -3,6 +3,7 @@ package com.pass.hype
 import android.content.SharedPreferences
 import android.os.Build
 import android.os.Bundle
+import android.view.WindowManager
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
@@ -10,6 +11,7 @@ import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +35,7 @@ import com.pass.hype.presentation.boarding.OnBoarding
 import com.pass.hype.presentation.cards.CardViewModel
 import com.pass.hype.presentation.components.dialog.ChangePinDialog
 import com.pass.hype.presentation.passwords.PasswordViewModel
+import com.pass.hype.presentation.recovery.RecoveryScreen
 import com.pass.hype.ui.theme.HypepassTheme
 
 class MainActivity : FragmentActivity() {
@@ -63,6 +66,17 @@ class MainActivity : FragmentActivity() {
                 var oldPin by remember { mutableStateOf("") }
                 var newPin by remember { mutableStateOf("") }
 
+                DisposableEffect(Unit) {
+                    window?.setFlags(
+                        WindowManager.LayoutParams.FLAG_SECURE,
+                        WindowManager.LayoutParams.FLAG_SECURE
+                    )
+
+                    onDispose {
+                        window?.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
+                    }
+                }
+
                 ChangePinDialog(
                     isOpen = isChangePinDialogOpen,
                     oldPin = oldPin,
@@ -89,7 +103,7 @@ class MainActivity : FragmentActivity() {
                     val biometricAuthenticator = BiometricAuthenticator(LocalContext.current)
                     biometricAuthenticator.promptBiometricAuth(
                         title = "Unlock App",
-                        subTitle = "Unlock to access your passwords",
+                        subTitle = "Unlock to access Passwords & Cards",
                         negativeButtonText = "Use PIN",
                         fragmentActivity = LocalView.current.context as FragmentActivity,
                         onSuccess = {
