@@ -2,7 +2,6 @@
 
 package com.pass.hype.presentation.biometric
 
-import android.content.ClipData
 import android.content.Context
 import android.os.Build
 import android.os.VibrationEffect
@@ -30,7 +29,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,7 +46,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.edit
 import androidx.fragment.app.FragmentActivity
 import androidx.navigation.NavController
 import com.pass.hype.R

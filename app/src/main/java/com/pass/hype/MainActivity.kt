@@ -35,7 +35,6 @@ import com.pass.hype.presentation.boarding.OnBoarding
 import com.pass.hype.presentation.cards.CardViewModel
 import com.pass.hype.presentation.components.dialog.ChangePinDialog
 import com.pass.hype.presentation.passwords.PasswordViewModel
-import com.pass.hype.presentation.recovery.RecoveryScreen
 import com.pass.hype.ui.theme.HypepassTheme
 
 class MainActivity : FragmentActivity() {

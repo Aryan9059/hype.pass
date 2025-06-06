@@ -44,7 +44,6 @@ import com.pass.hype.presentation.components.dialog.AddCardDialog
 import com.pass.hype.presentation.components.dialog.AddPasswordDialog
 import com.pass.hype.presentation.passwords.PasswordViewModel
 import com.pass.hype.presentation.passwords.PasswordsScreen
-import com.pass.hype.presentation.recovery.RecoveryScreen
 import com.pass.hype.presentation.settings.SettingsScreen
 import com.pass.hype.utils.generateStrongPassword
 import com.pass.hype.utils.getPasswordStrength
