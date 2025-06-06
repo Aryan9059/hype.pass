@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="https://github.com/Aryan9059/hype.pass/blob/ce25e0884c48bd3a196ca768ab978b6bc36c6d25/sources/icon_gradient_white.png" width="100px"/>
+<img src="https://github.com/Aryan9059/hype.pass/blob/71a62e95a5a8050411d1358873529b330501c50c/sources/icon.png" width="100px"/>
 
 # **hype.pass**
 
@@ -15,7 +15,7 @@ hype.pass allows you to store your passwords and card information locally on you
 <br/>
 <br/>
 
-![Banner](https://github.com/Aryan9059/hype.pass/blob/0505c81920a8e12600939e7adceaa4f6823c9e2e/sources/banner_github.png)
+![Banner](https://github.com/Aryan9059/hype.pass/blob/0f662a61ab6ff5e95a57cec0725c0c569896b453/sources/banner_github.png)
 
 <div style="display: flex; flex-direction: row;">
     <a href='https://github.com/Aryan9059/hype.pass/releases/latest'><img alt='Get it on Github' src='https://github.com/vishal2376/snaptick/assets/38159691/f502e2ec-dbf4-4ed6-b23f-a47b74080fea' style="width:200px"></a>
@@ -30,6 +30,10 @@ hype.pass allows you to store your passwords and card information locally on you
 - 💳 **Save your Card details securely**
 - 🫰 **Use Biometric Authentication**
 - ✨ **Auto generate strong Passwords**
+- ✳️ **Encrypted using AES-265 & Android Keystore**
+- ⏬ **Create encrypted backups & Restore them using your PIN**
+- 🚫 **Screenshots blocked from the app**
+- #️⃣ **Recover forgotten PIN using Recovery Key**
 - 🎬 **Smooth Animations**
 - 🎨 **Material 3 based Modern UI**
 - 🌚 **Available in Light/Dark Mode**
