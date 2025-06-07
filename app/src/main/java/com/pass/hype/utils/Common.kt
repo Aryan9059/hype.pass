@@ -205,22 +205,22 @@ fun decryptDatabaseWithPin(encryptedFile: File, pin: String, context: Context): 
 
         if (!isValidSQLiteDatabase(decryptedFile)) {
             decryptedFile.delete()
-            throw InvalidPinException("Incorrect PIN")
+            throw InvalidPinException("Invalid file")
         }
 
         decryptedFile
-    } catch (e: javax.crypto.BadPaddingException) {
-        Log.e("Decryption", "Bad padding - likely incorrect PIN: ${e.message}")
-        throw InvalidPinException("Incorrect PIN")
-    } catch (e: javax.crypto.IllegalBlockSizeException) {
-        Log.e("Decryption", "Illegal block size - likely incorrect PIN: ${e.message}")
-        throw InvalidPinException("Incorrect PIN")
-    } catch (e: InvalidPinException) {
-        Log.e("Decryption", "Invalid PIN: ${e.message}")
-        throw InvalidPinException("Incorrect PIN")
-    } catch (e: Exception) {
-        Log.e("Decryption", "Failed to decrypt database: ${e.message}")
-        throw DecryptionException("Incorrect PIN")
+    } catch (_: javax.crypto.BadPaddingException) {
+        Log.e("Decryption", "Bad padding")
+        throw InvalidPinException("Invalid PIN")
+    } catch (_: javax.crypto.IllegalBlockSizeException) {
+        Log.e("Decryption", "Illegal block size")
+        throw InvalidPinException("Invalid or corrupted file")
+    } catch (_: InvalidPinException) {
+        Log.e("Decryption", "Invalid PIN")
+        throw InvalidPinException("Invalid PIN")
+    } catch (_: Exception) {
+        Log.e("Decryption", "Failed to decrypt database")
+        throw DecryptionException("Failed to decrypt database")
     }
 }
 

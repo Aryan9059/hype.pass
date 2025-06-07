@@ -236,7 +236,7 @@ fun SettingsScreen(modifier: Modifier) {
                 Toast.makeText(context, "Import successful", Toast.LENGTH_LONG).show()
             }, onError = { errorMessage ->
                 Log.e("Import", "Import failed: $errorMessage")
-                Toast.makeText(context, "Import failed. Incorrect PIN", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Import failed: $errorMessage", Toast.LENGTH_LONG).show()
             })
 
             HorizontalDivider(Modifier.padding(vertical = 8.dp))
@@ -333,7 +333,7 @@ suspend fun exportDatabase(
             ).fallbackToDestructiveMigration(false).build()
     }
 
-    recreateApp(context)
+    if(databaseName == "Passwords") recreateApp(context)
 }
 
 private fun saveToDocuments(sourceFile: File, fileName: String, context: Context): Uri? {
@@ -414,12 +414,10 @@ suspend fun importDatabase(
             onSuccess()
         }
 
-    } catch (_: Exception) {
+    } catch (e: Exception) {
         withContext(Dispatchers.Main) {
-            onError("Import failed: Incorrect PIN")
+            onError(e.message.toString())
         }
-
-        recreateApp(context)
     }
 
     when (databaseName) {
@@ -434,6 +432,8 @@ suspend fun importDatabase(
             databaseName
         ).fallbackToDestructiveMigration(false).build()
     }
+
+    recreateApp(context)
 }
 
 private fun createTempFileFromUri(uri: Uri, context: Context): File? {

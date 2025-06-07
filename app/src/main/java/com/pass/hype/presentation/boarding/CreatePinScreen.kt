@@ -24,7 +24,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -44,6 +46,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,9 +68,7 @@ import com.pass.hype.utils.generateStrongRecoveryKey
 @RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun OnBoardPinScreen(
-    navController: NavController
-    ) {
+fun OnBoardPinScreen(navController: NavController) {
     var enteredPin by remember { mutableStateOf("") }
     var maxPinLength by remember { mutableIntStateOf(4) }
     var confirmState by remember { mutableStateOf(false) }
@@ -82,7 +83,7 @@ fun OnBoardPinScreen(
 
     val pinSharedPrefs: SharedPreferences = LocalContext.current.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
     val onBoardSharedPrefs: SharedPreferences = LocalContext.current.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
-    val recoveryKey = generateStrongRecoveryKey()
+    val recoveryKey = rememberSaveable { generateStrongRecoveryKey() }
     var enteredRecoveryKey by remember { mutableStateOf("") }
 
     var showRecoveryScreen by remember { mutableStateOf(false) }
@@ -174,10 +175,11 @@ fun OnBoardPinScreen(
         contentAlignment = Alignment.Center
     ) {
         Column(
-            modifier = Modifier,
+            modifier = Modifier.verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
+            Spacer(modifier = Modifier.size(16.dp))
             Text(text = if(!confirmState) "Create new PIN for hype.pass" else if (notMatch) "PIN didn't match the previous one" else "Confirm the entered PIN", style = MaterialTheme.typography.titleMedium.copy(color = MaterialTheme.colorScheme.onBackground))
             Spacer(modifier = Modifier.size(16.dp))
             if (!confirmState){
@@ -327,6 +329,7 @@ fun OnBoardPinScreen(
                     }
                 }
             }
+            Spacer(modifier = Modifier.size(16.dp))
         }
     }
 }

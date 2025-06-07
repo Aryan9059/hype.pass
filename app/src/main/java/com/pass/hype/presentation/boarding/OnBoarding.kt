@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,7 +39,6 @@ import com.pass.hype.R
 @Composable
 fun OnBoarding(modifier: Modifier, onClicked: () -> Unit, isBoarding: Boolean) {
     val alphaAnimation = remember { Animatable(initialValue = 0f) }
-
     LaunchedEffect(100) {
         alphaAnimation.animateTo(targetValue = 1f, animationSpec = tween(300, 0))
     }
@@ -48,7 +49,7 @@ fun OnBoarding(modifier: Modifier, onClicked: () -> Unit, isBoarding: Boolean) {
                 .graphicsLayer { alpha = alphaAnimation.value }
                 .fillMaxSize()
         ) {
-            Column(modifier = Modifier.paint(painter = painterResource(R.drawable.onboard_bg), contentScale = ContentScale.FillBounds), verticalArrangement = Arrangement.SpaceBetween) {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState()).paint(painter = painterResource(R.drawable.onboard_bg), contentScale = ContentScale.FillBounds), verticalArrangement = Arrangement.SpaceBetween) {
                 Column(modifier.padding(24.dp)) {
                     Spacer(modifier = Modifier.size(64.dp))
                     Image(modifier = Modifier.size(72.dp).clip(RoundedCornerShape(16.dp)), painter = painterResource(R.drawable.logo), contentDescription = "")
