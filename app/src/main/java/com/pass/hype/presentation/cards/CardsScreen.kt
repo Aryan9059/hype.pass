@@ -41,7 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui. text.input.TextFieldValue
 import androidx.compose. ui.unit.dp
-import com.pass.hype.components.CardItem
+import com.pass.hype.components.card.CardItem
 import com.pass.hype.components.EmptyScreen
 import com.pass.hype.components.SearchBar
 import com.pass.hype.components.dialog.AddCardDialog
