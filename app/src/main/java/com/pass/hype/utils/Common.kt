@@ -57,6 +57,15 @@ fun String.capitalizeWords(delimiter: String = " ") =
 
     }
 
+fun detectCardCompany(number: String): String {
+    return when (number. firstOrNull()) {
+        '5', '2' -> "MASTERCARD"
+        '4' -> "VISA"
+        '3' -> "\uD83C\uDDFA\uD83C\uDDF8 EXPRESS"
+        else -> "OTHER"
+    }
+}
+
 //Generate a random 18 character strong password
 fun generateStrongPassword(length: Int = 18): String {
     val upperCaseLetters = ('A'..'Z').toList()
@@ -317,7 +326,6 @@ fun RecoveryKeyAlertDialog(
             TextButton(
                 onClick = {
                     if (recoveryKey == enteredRecoveryKey) Toast.makeText(context, "Your PIN is: ${pinSharedPrefs.getString("stored_value", "")}", Toast.LENGTH_LONG).show()
-                    enteredRecoveryKey = ""
                     onDismiss()
                 },
                 enabled = recoveryKey == enteredRecoveryKey

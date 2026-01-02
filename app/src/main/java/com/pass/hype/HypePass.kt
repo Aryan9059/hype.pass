@@ -2,20 +2,26 @@ package com.pass.hype
 
 import android.app.Application
 import androidx.room.Room
-import com.pass.hype.data.local.cards.CardDatabase
-import com.pass.hype.data.local.passwords.PasswordDatabase
+import com.pass.hype.data.room.database.CardDatabase
+import com.pass.hype.data.room.database.PasswordDatabase
 
-class HypePass: Application(){
+class HypePass :  Application() {
 
     companion object {
         lateinit var passwordDatabase: PasswordDatabase
+            private set
         lateinit var cardDatabase: CardDatabase
+            private set
+
+        private var isInitialized = false
+
+        fun isDatabaseInitialized(): Boolean = isInitialized
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        passwordDatabase = Room.databaseBuilder(
+        passwordDatabase = Room. databaseBuilder(
             applicationContext,
             PasswordDatabase::class.java,
             "Passwords"
@@ -30,5 +36,7 @@ class HypePass: Application(){
         )
             .fallbackToDestructiveMigration(false)
             .build()
+
+        isInitialized = true
     }
 }

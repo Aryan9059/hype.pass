@@ -19,9 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.pass.hype.presentation.components.EmptyScreen
-import com.pass.hype.presentation.components.CardItem
-import com.pass.hype.presentation.components.SearchBar
+import com.pass.hype.components.EmptyScreen
+import com.pass.hype.components.CardItem
+import com.pass.hype.components.SearchBar
 
 @Composable
 fun CardsScreen(modifier: Modifier, cardViewModel: CardViewModel) {
@@ -39,8 +39,8 @@ fun CardsScreen(modifier: Modifier, cardViewModel: CardViewModel) {
 
         Column {
             Spacer(Modifier.size(8.dp))
-            SearchBar(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp).graphicsLayer { alpha = alphaAnimation.value },
-                hint = "Search Cards", searchQuery = textState, isListEmpty = cardList!!.isEmpty())
+//            SearchBar(modifier = Modifier.fillMaxWidth().padding(horizontal = 4.dp).graphicsLayer { alpha = alphaAnimation.value },
+//                hint = "Search Cards", searchQuery = textState, isListEmpty = cardList!!.isEmpty())
 
             if (it.isEmpty()) {
                 EmptyScreen(modifier = modifier, screenText = "Tap the + button to add cards")

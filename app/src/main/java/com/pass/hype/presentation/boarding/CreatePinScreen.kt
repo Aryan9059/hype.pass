@@ -65,7 +65,6 @@ import androidx.navigation.NavController
 import com.pass.hype.R
 import com.pass.hype.utils.generateStrongRecoveryKey
 
-@RequiresApi(Build.VERSION_CODES.Q)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun OnBoardPinScreen(navController: NavController) {

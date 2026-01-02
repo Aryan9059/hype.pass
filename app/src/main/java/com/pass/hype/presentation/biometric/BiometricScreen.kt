@@ -53,7 +53,6 @@ import androidx.navigation.NavController
 import com.pass.hype.R
 import com.pass.hype.utils.RecoveryKeyAlertDialog
 
-@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun BiometricScreen(
     correctPin: String,

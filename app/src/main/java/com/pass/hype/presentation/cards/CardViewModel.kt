@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.pass.hype.HypePass
-import com.pass.hype.data.local.cards.Cards
+import com.pass.hype.data.room.model.Cards
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
