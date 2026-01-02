@@ -1,347 +1,595 @@
 package com.pass.hype.components
 
 import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.Intent
-import android.util.Log
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
+import androidx.compose.animation.AnimatedVisibility
+import androidx. compose.animation.animateContentSize
+import androidx.compose.animation.core. Animatable
+import androidx.compose.animation. core.LinearOutSlowInEasing
+import androidx.compose.animation.core. tween
+import androidx. compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose. foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose. foundation.layout.Column
+import androidx.compose.foundation.layout. Row
+import androidx.compose.foundation.layout. Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation. layout.fillMaxSize
+import androidx.compose.foundation.layout. fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.CopyAll
-import androidx.compose.material.icons.filled.DeleteOutline
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Share
-import androidx.compose.material3.CardDefaults
+import androidx.compose. foundation.layout.padding
+import androidx.compose.foundation.layout. size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation. shape.RoundedCornerShape
+import androidx.compose.material. icons.Icons
+import androidx.compose.material.icons.filled. ContentCopy
+import androidx.compose.material. icons.filled.Delete
+import androidx.compose.material. icons.filled.Edit
+import androidx.compose.material. icons.filled. Favorite
+import androidx. compose.material.icons.filled.FavoriteBorder
+import androidx.compose. material. icons.filled.Lock
+import androidx.compose.material.icons. filled.LockOpen
+import androidx.compose.material. icons.filled.PushPin
+import androidx.compose.material.icons. filled.Share
+import androidx.compose.material.icons. filled. Visibility
+import androidx.compose.material.icons. filled.VisibilityOff
+import androidx.compose.material. icons.outlined.PushPin
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx. compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime. Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose. runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
+import androidx.compose. runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.platform.LocalClipboard
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui. graphics.graphicsLayer
+import androidx.compose.ui. platform.LocalClipboard
+import androidx.compose.ui.platform. LocalContext
+import androidx.compose.ui. text.TextStyle
+import androidx. compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui. unit.sp
 import androidx.core.graphics.toColorInt
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.pass.hype.R
-import com.pass.hype.data.room.model.Cards
-import com.pass.hype.presentation.cards.CardViewModel
-import com.pass.hype.components.dialog.AddCardDialog
 import com.pass.hype.components.dialog.DeleteDialog
-import kotlinx.coroutines.launch
+import com.pass.hype.data.room.model.Card
+import com.pass.hype.data.room. model.CardType
+import com.pass. hype.utils.CardUtils
+import kotlinx.coroutines.delay
 import kotlin.math.abs
-
-val LatoFont = FontFamily(
-    Font(R.font.lato_black, FontWeight.Black),
-    Font(R.font.lato_black_italic, FontWeight.Black, FontStyle.Italic),
-    Font(R.font.lato_bold, FontWeight.Bold),
-    Font(R.font.lato_bold_italic, FontWeight.Bold, FontStyle.Italic),
-    Font(R.font.lato_italic, FontWeight.Normal, FontStyle.Italic),
-    Font(R.font.lato_light, FontWeight.Light),
-    Font(R.font.lato_light_italic, FontWeight.Light, FontStyle.Italic),
-    Font(R.font.lato_regular, FontWeight.Normal),
-    Font(R.font.lato_thin, FontWeight.Thin),
-    Font(R.font.lato_thin_italic, FontWeight.Thin, FontStyle.Italic)
-)
 
 @Composable
 fun CardItem(
-    modifier: Modifier = Modifier,
-    item: Cards
+    card: Card,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    onToggleFavorite:  () -> Unit,
+    onTogglePinned: () -> Unit,
+    onToggleLock: () -> Unit,
+    onCardAccess: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
-    val vm = viewModel<CardViewModel>()
-    val alphaAnimation = remember { Animatable(initialValue = 0f) }
+    val context = LocalContext.current
+    val clipboardManager = LocalClipboard.current. nativeClipboard
 
-    var isCardDialogOpen by rememberSaveable { mutableStateOf(false) }
-    var cardName by remember { mutableStateOf(item.cardHolder) }
-    var cardNumber by remember { mutableStateOf(item.cardNumber) }
-    var expiryMonth by remember { mutableStateOf(item.expires.substring(0, 2)) }
-    var expiryYear by remember { mutableStateOf(item.expires.substring(3, 5)) }
-    var cvv by remember { mutableStateOf(item.cvv) }
-    var company by remember {
-        if (item.cardNumber.first() == '5' || cardNumber.first() == '2') {
-            mutableStateOf("MASTERCARD")
-        } else if (item.cardNumber.first() == '4') {
-            mutableStateOf("VISA")
-        } else if (item.cardNumber.first() == '3') {
-            mutableStateOf("\uD83C\uDDFA\uD83C\uDDF8 EXPRESS")
-        } else {
-            mutableStateOf("OTHER")
+    val alphaAnimation = remember { Animatable(initialValue = 0f) }
+    var showFullNumber by rememberSaveable { mutableStateOf(false) }
+    var showCvv by rememberSaveable { mutableStateOf(false) }
+    var isDeleteDialogOpen by rememberSaveable { mutableStateOf(false) }
+    var showActions by rememberSaveable { mutableStateOf(false) }
+
+    // Auto-hide sensitive data after 10 seconds
+    LaunchedEffect(showFullNumber) {
+        if (showFullNumber) {
+            delay(10000)
+            showFullNumber = false
         }
     }
 
-    AddCardDialog(
-        isOpen = isCardDialogOpen,
-        cardName = cardName,
-        cardNumber = cardNumber,
-        expiryMonth = expiryMonth,
-        expiryYear = expiryYear,
-        cvv = cvv,
-        company = company,
-        onDismissRequest = {
-            isCardDialogOpen = false
-            cardName = item.cardHolder
-            cardNumber = item.cardNumber
-            expiryMonth = item.expires.substring(0, 1)
-            expiryYear = item.expires.substring(3, 4)
-            cvv = item.cvv
-            company = (if (cardNumber.isNotBlank()){
-                if (cardNumber.first() == '5' || cardNumber.first() == '2') {
-                    "MASTERCARD"
-                } else if (cardNumber.first() == '4') {
-                    "VISA"
-                } else if (cardNumber.first() == '3') {
-                    "\uD83C\uDDFA\uD83C\uDDF8 EXPRESS"
-                } else {
-                    "OTHER"
-                }
-            } else {
-                Log.i("","")
-            }).toString()
+    LaunchedEffect(showCvv) {
+        if (showCvv) {
+            delay(10000)
+            showCvv = false
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        alphaAnimation.animateTo(targetValue = 1f, animationSpec = tween(300))
+    }
+
+    // Delete Dialog
+    DeleteDialog(
+        isOpen = isDeleteDialogOpen,
+        item = "Card",
+        onDelete = {
+            onDelete()
+            isDeleteDialogOpen = false
         },
-        onConfirmButtonClick = {
-            vm.deleteCard(item.cardId)
-            vm.addCard(
-                Cards(
-                    baseColor = item.baseColor,
-                    cardNumber = cardNumber,
-                    cardHolder = cardName,
-                    expires = "$expiryMonth/$expiryYear",
-                    cvv = cvv
-                )
-            )
-            isCardDialogOpen = false
-            cardName = ""
-            cardNumber = ""
-            expiryMonth = ""
-            expiryYear = ""
-            cvv = ""
-            company = ""
-        },
-        onNameChanged = {cardName = it},
-        onNumberChanged = {
-            cardNumber = it.take(16)
-            if (cardNumber.isNotBlank()){
-                company = if (cardNumber.first() == '5' || cardNumber.first() == '2') {
-                    "MASTERCARD"
-                } else if (cardNumber.first() == '4') {
-                    "VISA"
-                } else if (cardNumber.first() == '3') {
-                    "\uD83C\uDDFA\uD83C\uDDF8 EXPRESS"
-                } else {
-                    "OTHER"
-                }
-            }
-        },
-        onExpiryMonthChanged = {expiryMonth = it.take(2)},
-        onExpiryYearChanged = {expiryYear = it.take(2)},
-        onCvvChanged = {cvv = it.take(3)},
-        onCompanyChanged = {company = it},
-        edit = true
+        onDismissRequest = { isDeleteDialogOpen = false }
     )
 
-    var isDeleteDialogOpen by rememberSaveable { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-
-    DeleteDialog(isOpen = isDeleteDialogOpen, item = "Card", onDelete = {
-        scope.launch {
-            vm.deleteCard(item.cardId)
-            isDeleteDialogOpen = false
-        }
-    }, onDismissRequest = { isDeleteDialogOpen = false })
-
-    LaunchedEffect(100) {
-        alphaAnimation.animateTo(targetValue = 1f, animationSpec = tween(300, 0))
-    }
     val bankCardAspectRatio = 1.586f
+
     OutlinedCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 8.dp)
-            .padding(bottom = 10.dp)
+            .padding(horizontal = 12.dp, vertical = 6.dp)
             .aspectRatio(bankCardAspectRatio)
-            .graphicsLayer {
-                alpha = alphaAnimation.value
-            }
+            .graphicsLayer { alpha = alphaAnimation. value }
             .animateContentSize(
                 animationSpec = tween(
                     durationMillis = 300,
                     easing = LinearOutSlowInEasing
                 )
             ),
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(20.dp),
+        onClick = { showActions = ! showActions }
     ) {
         Box {
-            val clipboardManager = LocalClipboard.current.nativeClipboard
-            val context = LocalContext.current
+            // Background
+            CardBackground(baseColor = Color(card.baseColor.toColorInt()))
 
-            BankCardBackground(baseColor = Color(item.baseColor.toColorInt()))
-            BankCardNumber(cardNumber = item.cardNumber)
-            SpaceWrapper(
-                modifier = Modifier.align(Alignment.TopStart),
-                space = 32.dp,
-                top = true,
-                left = true
-            ) {
-                BankCardLabelAndText(label = "card holder", text = item.cardHolder, clipboardManager)
-            }
-            SpaceWrapper(
-                modifier = Modifier.align(Alignment.BottomStart),
-                space = 32.dp,
-                bottom = true,
-                left = true
-            ) {
-                Row {
-                    BankCardLabelAndText(label = "expires", text = item.expires, clipboardManager)
-                    Spacer(modifier = Modifier.width(16.dp))
-                    BankCardLabelAndText(label = "cvv", text = item.cvv, clipboardManager)
-                }
-            }
-            SpaceWrapper(
-                modifier = Modifier.align(Alignment.BottomEnd),
-                space = 32.dp,
-                bottom = true,
-                right = true
-            ) {
-                Text(
-                    text = if (item.cardNumber.first().toString() == "2" || item.cardNumber.first().toString() == "5") {
-                        "MASTERCARD"
-                    } else if (item.cardNumber.first().toString() == "4"){
-                        "VISA"
-                    } else if (item.cardNumber.first().toString() == "3"){
-                        "\uD83C\uDDFA\uD83C\uDDF8 EXPRESS"
-                    } else "OTHER",
-                    style = TextStyle(
-                        fontFamily = LatoFont,
-                        fontWeight = FontWeight.W500,
-                        fontStyle = FontStyle.Italic,
-                        fontSize = 22.sp,
-                        letterSpacing = 1.sp,
-                        color = Color.White
-                    )
-                )
-            }
-            OutlinedCard(
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
-                border = BorderStroke(1.dp, MaterialTheme.colorScheme.onError),
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(6.dp)
-                    .padding(end = 40.dp),
-                onClick = {
-                    isDeleteDialogOpen = true
-                },
-                shape = RoundedCornerShape(50)
-            ) {
-                Icon(modifier = Modifier
-                    .size(36.dp)
-                    .padding(8.dp),
-                    tint = MaterialTheme.colorScheme.error,
-                    imageVector = Icons.Default.DeleteOutline,
-                    contentDescription = "Delete Card")
-            }
-            OutlinedCard(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(6.dp)
-                    .padding(top = 40.dp),
-                onClick = {
-                    isCardDialogOpen = true
-                },
-                shape = RoundedCornerShape(50)
-            ) {
-                Icon(modifier = Modifier
-                    .size(36.dp)
-                    .padding(8.dp),
-                    imageVector = Icons.Default.Edit,
-                    contentDescription = "Edit Card")
-            }
-            OutlinedCard(
-                onClick = {
-                    val sendIntent = Intent(Intent.ACTION_SEND).apply {
-                        putExtra(Intent.EXTRA_TEXT, "Holder Name: ${item.cardHolder}\nCard Number: ${item.cardNumber}\nExpires on: ${item.expires}\nCVV: ${item.cvv}")
-                        type = "text/plain"
+            // Locked Overlay
+            if (card.isLocked) {
+                LockedCardOverlay(onUnlock = onToggleLock)
+            } else {
+                // Card Content
+                CardContent(
+                    card = card,
+                    showFullNumber = showFullNumber,
+                    showCvv = showCvv,
+                    onToggleNumber = {
+                        showFullNumber = !showFullNumber
+                        if (showFullNumber) onCardAccess()
+                    },
+                    onToggleCvv = {
+                        showCvv = !showCvv
+                        if (showCvv) onCardAccess()
+                    },
+                    onCopyNumber = {
+                        clipboardManager.setPrimaryClip(
+                            ClipData.newPlainText("Card Number", card.cardNumber)
+                        )
                     }
-                    val shareIntent = Intent.createChooser(sendIntent, null)
-                    context.startActivity(shareIntent)
-                },
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(6.dp)
-                    .padding(end = 40.dp, top = 40.dp),
-                shape = RoundedCornerShape(50)
-            ) {
-                Icon(modifier = Modifier
-                    .size(36.dp)
-                    .padding(8.dp),
-                    imageVector = Icons.Default.Share,
-                    contentDescription = "Share Card Details")
-            }
-            OutlinedCard(
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(6.dp),
-                onClick = { clipboardManager.setPrimaryClip(ClipData.newPlainText("Card Number", item.cardNumber))
-                 },
-                shape = RoundedCornerShape(50)
-            ) {
-                Icon(modifier = Modifier
-                    .size(36.dp)
-                    .padding(8.dp),
-                    imageVector = Icons.Default.CopyAll,
-                    contentDescription = "Copy Card Number")
+                )
+
+                // Action Buttons
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = showActions,
+                    modifier = Modifier.align(Alignment.TopEnd)
+                ) {
+                    CardActionButtons(
+                        card = card,
+                        onEdit = onEdit,
+                        onDelete = { isDeleteDialogOpen = true },
+                        onToggleFavorite = onToggleFavorite,
+                        onTogglePinned = onTogglePinned,
+                        onToggleLock = onToggleLock,
+                        onShare = {
+                            val shareText = buildCardShareText(card)
+                            val sendIntent = Intent(Intent.ACTION_SEND).apply {
+                                putExtra(Intent.EXTRA_TEXT, shareText)
+                                type = "text/plain"
+                            }
+                            context.startActivity(Intent.createChooser(sendIntent, "Share Card"))
+                        }
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun BankCardBackground(baseColor: Color) {
-    val colorSaturation75 = baseColor.setSaturation(0.9f)
-    val colorSaturation50 = baseColor.setSaturation(0.6f)
+private fun LockedCardOverlay(onUnlock: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color. Black.copy(alpha = 0.85f)),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Default. Lock,
+                contentDescription = "Locked",
+                tint = Color.White,
+                modifier = Modifier.size(48.dp)
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "Card Locked",
+                color = Color.White,
+                style = MaterialTheme.typography. bodyLarge
+            )
+            Spacer(modifier = Modifier.height(16.dp))
+            Surface(
+                onClick = onUnlock,
+                shape = RoundedCornerShape(20.dp),
+                color = Color.White. copy(alpha = 0.2f)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.LockOpen,
+                        contentDescription = null,
+                        tint = Color.White,
+                        modifier = Modifier.size(16.dp)
+                    )
+                    Text(
+                        text = "Tap to Unlock",
+                        color = Color.White,
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CardContent(
+    card:  Card,
+    showFullNumber: Boolean,
+    showCvv: Boolean,
+    onToggleNumber: () -> Unit,
+    onToggleCvv: () -> Unit,
+    onCopyNumber:  () -> Unit
+) {
+    Column(
+        modifier = Modifier
+            . fillMaxSize()
+            .padding(20.dp)
+    ) {
+        // Top Row - Card Info & Badges
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = card.cardName,
+                    style = TextStyle(
+                        fontWeight = FontWeight. Bold,
+                        fontSize = 16.sp,
+                        color = Color.White
+                    )
+                )
+                Text(
+                    text = CardUtils.getCardSubTypeDisplayName(card.cardSubType),
+                    style = TextStyle(
+                        fontSize = 12.sp,
+                        color = Color.White. copy(alpha = 0.7f)
+                    )
+                )
+                card.issuer?.let { issuer ->
+                    Text(
+                        text = issuer,
+                        style = TextStyle(
+                            fontSize = 11.sp,
+                            color = Color. White.copy(alpha = 0.6f)
+                        )
+                    )
+                }
+            }
+
+            // Badges
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                if (card.isPinned) {
+                    CardBadge(icon = Icons.Default. PushPin)
+                }
+                if (card.isFavorite) {
+                    CardBadge(icon = Icons. Default.Favorite, tint = Color.Red)
+                }
+
+                // Expiry Status
+                card.expiryDate?.let { expiry ->
+                    when {
+                        CardUtils.isExpired(expiry) -> {
+                            ExpiryBadge(text = "EXPIRED", color = Color.Red)
+                        }
+                        CardUtils.isExpiringSoon(expiry) -> {
+                            val days = CardUtils.getDaysUntilExpiry(expiry)
+                            ExpiryBadge(
+                                text = "${days}d left",
+                                color = Color(0xFFFFA000)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        // Card Number Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = if (showFullNumber) {
+                    CardUtils.formatCardNumber(card. cardNumber)
+                } else {
+                    CardUtils.formatCardNumber(card.cardNumberMasked)
+                },
+                style = TextStyle(
+                    fontWeight = FontWeight. Bold,
+                    fontSize = 18.sp,
+                    letterSpacing = 2.sp,
+                    color = Color. White
+                ),
+                modifier = Modifier.weight(1f)
+            )
+
+            Row {
+                SmallIconButton(
+                    icon = if (showFullNumber) Icons.Default. VisibilityOff else Icons.Default. Visibility,
+                    onClick = onToggleNumber,
+                    contentDescription = if (showFullNumber) "Hide" else "Show"
+                )
+                SmallIconButton(
+                    icon = Icons.Default.ContentCopy,
+                    onClick = onCopyNumber,
+                    contentDescription = "Copy"
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        // Bottom Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Bottom
+        ) {
+            // Holder Name
+            CardLabelValue(label = "HOLDER", value = card.holderName. uppercase())
+
+            // Financial Card specific fields
+            if (card.cardType == CardType. FINANCIAL) {
+                Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    card.expiryDate?.let { expiry ->
+                        CardLabelValue(label = "EXPIRES", value = expiry)
+                    }
+
+                    card.cvv?.let { cvv ->
+                        Column {
+                            Text(
+                                text = "CVV",
+                                style = TextStyle(
+                                    fontSize = 10.sp,
+                                    color = Color.White.copy(alpha = 0.6f)
+                                )
+                            )
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    text = if (showCvv) cvv else "•••",
+                                    style = TextStyle(
+                                        fontWeight = FontWeight. Medium,
+                                        fontSize = 14.sp,
+                                        color = Color.White
+                                    )
+                                )
+                                SmallIconButton(
+                                    icon = if (showCvv) Icons.Default.VisibilityOff else Icons.Default. Visibility,
+                                    onClick = onToggleCvv,
+                                    contentDescription = if (showCvv) "Hide CVV" else "Show CVV",
+                                    size = 16.dp
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Government ID specific fields
+            if (card.cardType == CardType.GOVERNMENT_ID) {
+                card.dateOfBirth?.let { dob ->
+                    CardLabelValue(label = "DOB", value = dob)
+                }
+                card.validUntil?.let { valid ->
+                    CardLabelValue(label = "VALID UNTIL", value = valid)
+                }
+            }
+
+            // Card Network
+            card.cardNetwork?.let { network ->
+                Text(
+                    text = network. name,
+                    style = TextStyle(
+                        fontWeight = FontWeight.Bold,
+                        fontStyle = FontStyle. Italic,
+                        fontSize = 18.sp,
+                        color = Color. White
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CardActionButtons(
+    card:  Card,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit,
+    onToggleFavorite: () -> Unit,
+    onTogglePinned: () -> Unit,
+    onToggleLock: () -> Unit,
+    onShare: () -> Unit
+) {
+    Column(
+        modifier = Modifier. padding(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        ActionButton(
+            icon = Icons.Default. Edit,
+            onClick = onEdit,
+            containerColor = Color.White.copy(alpha = 0.9f),
+            contentColor = Color.Black
+        )
+        ActionButton(
+            icon = if (card.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+            onClick = onToggleFavorite,
+            containerColor = if (card.isFavorite) Color.Red else Color.White.copy(alpha = 0.9f),
+            contentColor = if (card. isFavorite) Color.White else Color.Black
+        )
+        ActionButton(
+            icon = if (card. isPinned) Icons.Default.PushPin else Icons. Outlined.PushPin,
+            onClick = onTogglePinned,
+            containerColor = Color.White. copy(alpha = 0.9f),
+            contentColor = Color.Black
+        )
+        ActionButton(
+            icon = Icons.Default.Lock,
+            onClick = onToggleLock,
+            containerColor = Color.White. copy(alpha = 0.9f),
+            contentColor = Color.Black
+        )
+        ActionButton(
+            icon = Icons.Default.Share,
+            onClick = onShare,
+            containerColor = Color. White.copy(alpha = 0.9f),
+            contentColor = Color.Black
+        )
+        ActionButton(
+            icon = Icons.Default.Delete,
+            onClick = onDelete,
+            containerColor = MaterialTheme.colorScheme.errorContainer,
+            contentColor = MaterialTheme.colorScheme.error
+        )
+    }
+}
+
+@Composable
+private fun ActionButton(
+    icon: androidx.compose.ui. graphics.vector.ImageVector,
+    onClick: () -> Unit,
+    containerColor:  Color,
+    contentColor: Color
+) {
+    Surface(
+        onClick = onClick,
+        shape = CircleShape,
+        color = containerColor,
+        modifier = Modifier.size(32.dp)
+    ) {
+        Box(contentAlignment = Alignment. Center) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = contentColor,
+                modifier = Modifier.size(16.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun CardBadge(
+    icon: androidx.compose.ui. graphics.vector.ImageVector,
+    tint: Color = Color.White
+) {
+    Surface(
+        shape = CircleShape,
+        color = Color.White.copy(alpha = 0.2f),
+        modifier = Modifier. size(24.dp)
+    ) {
+        Box(contentAlignment = Alignment. Center) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = tint,
+                modifier = Modifier.size(14.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ExpiryBadge(text: String, color:  Color) {
+    Surface(
+        shape = RoundedCornerShape(8.dp),
+        color = color
+    ) {
+        Text(
+            text = text,
+            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp),
+            style = TextStyle(
+                fontSize = 9.sp,
+                fontWeight = FontWeight. Bold,
+                color = Color.White
+            )
+        )
+    }
+}
+
+@Composable
+private fun CardLabelValue(label: String, value: String) {
+    Column {
+        Text(
+            text = label,
+            style = TextStyle(
+                fontSize = 10.sp,
+                color = Color.White.copy(alpha = 0.6f)
+            )
+        )
+        Text(
+            text = value,
+            style = TextStyle(
+                fontWeight = FontWeight. Medium,
+                fontSize = 14.sp,
+                color = Color.White
+            )
+        )
+    }
+}
+
+@Composable
+private fun SmallIconButton(
+    icon: androidx. compose.ui.graphics.vector.ImageVector,
+    onClick:  () -> Unit,
+    contentDescription: String,
+    size: androidx.compose.ui. unit. Dp = 20.dp
+) {
+    IconButton(
+        onClick = onClick,
+        modifier = Modifier. size(28.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = contentDescription,
+            tint = Color. White. copy(alpha = 0.8f),
+            modifier = Modifier.size(size)
+        )
+    }
+}
+
+@Composable
+fun CardBackground(baseColor: Color) {
+    val colorSaturation75 = baseColor.adjustSaturation(0.9f)
+    val colorSaturation50 = baseColor. adjustSaturation(0.6f)
 
     Canvas(
         modifier = Modifier
-            .fillMaxSize()
+            . fillMaxSize()
             .background(baseColor)
     ) {
         drawCircle(
@@ -357,159 +605,71 @@ fun BankCardBackground(baseColor: Color) {
     }
 }
 
-fun Color.toHsl(): FloatArray {
-    val redComponent = red
-    val greenComponent = green
-    val blueComponent = blue
+// Color extension for saturation adjustment
+private fun Color.adjustSaturation(factor: Float): Color {
+    val hsl = toHsl()
+    return hslToColor(hsl[0], (hsl[1] * factor).coerceIn(0f, 1f), hsl[2])
+}
 
-    val maxComponent = maxOf(redComponent, greenComponent, blueComponent)
-    val minComponent = minOf(redComponent, greenComponent, blueComponent)
-    val delta = maxComponent - minComponent
-    val lightness = (maxComponent + minComponent) / 2
+private fun Color.toHsl(): FloatArray {
+    val r = red
+    val g = green
+    val b = blue
 
-    val hue: Float
-    val saturation: Float
+    val max = maxOf(r, g, b)
+    val min = minOf(r, g, b)
+    val delta = max - min
+    val l = (max + min) / 2f
 
-    if (maxComponent == minComponent) {
-        hue = 0f
-        saturation = 0f
+    val h:  Float
+    val s: Float
+
+    if (delta == 0f) {
+        h = 0f
+        s = 0f
     } else {
-        saturation = if (lightness > 0.5) delta / (2 - maxComponent - minComponent) else delta / (maxComponent + minComponent)
-        hue = when (maxComponent) {
-            redComponent -> 60 * ((greenComponent - blueComponent) / delta % 6)
-            greenComponent -> 60 * ((blueComponent - redComponent) / delta + 2)
-            else -> 60 * ((redComponent - greenComponent) / delta + 4)
+        s = if (l > 0.5f) delta / (2f - max - min) else delta / (max + min)
+        h = when (max) {
+            r -> 60f * ((g - b) / delta % 6f)
+            g -> 60f * ((b - r) / delta + 2f)
+            else -> 60f * ((r - g) / delta + 4f)
         }
     }
 
-    return floatArrayOf(hue.coerceIn(0f, 360f), saturation, lightness)
+    return floatArrayOf(h. coerceIn(0f, 360f), s, l)
 }
 
-fun hslToColor(hue: Float, saturation: Float, lightness: Float): Color {
-    val chroma = (1 - abs(2 * lightness - 1)) * saturation
-    val secondaryColorComponent = chroma * (1 - abs((hue / 60) % 2 - 1))
-    val matchValue = lightness - chroma / 2
+private fun hslToColor(h: Float, s:  Float, l: Float): Color {
+    val c = (1f - abs(2f * l - 1f)) * s
+    val x = c * (1f - abs((h / 60f) % 2f - 1f))
+    val m = l - c / 2f
 
-    var red = matchValue
-    var green = matchValue
-    var blue = matchValue
+    var r = m
+    var g = m
+    var b = m
 
-    when ((hue.toInt() / 60) % 6) {
-        0 -> { red += chroma; green += secondaryColorComponent }
-        1 -> { red += secondaryColorComponent; green += chroma }
-        2 -> { green += chroma; blue += secondaryColorComponent }
-        3 -> { green += secondaryColorComponent; blue += chroma }
-        4 -> { red += secondaryColorComponent; blue += chroma }
-        5 -> { red += chroma; blue += secondaryColorComponent }
+    when ((h. toInt() / 60) % 6) {
+        0 -> { r += c; g += x }
+        1 -> { r += x; g += c }
+        2 -> { g += c; b += x }
+        3 -> { g += x; b += c }
+        4 -> { r += x; b += c }
+        5 -> { r += c; b += x }
     }
 
-    return Color(red = red, green = green, blue = blue)
+    return Color(r, g, b)
 }
 
-fun Color.setSaturation(newSaturation: Float): Color {
-    val hslValues = this.toHsl()
-    return hslToColor(hslValues[0], newSaturation.coerceIn(0f, 1f), hslValues[2])
-}
-
-@Composable
-fun BankCardNumber(cardNumber: String) {
-
-    Row(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 32.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-
-        repeat(3) {
-            BankCardDotGroup()
+private fun buildCardShareText(card: Card): String {
+    return buildString {
+        appendLine("Card:  ${card.cardName}")
+        appendLine("Type: ${CardUtils.getCardSubTypeDisplayName(card.cardSubType)}")
+        appendLine("Holder: ${card. holderName}")
+        appendLine("Number: ${card.cardNumberMasked}")
+        card.expiryDate?.let { appendLine("Expires: $it") }
+        card.issuer?.let { appendLine("Issuer: $it") }
+        if (card.notes.isNotBlank()) {
+            appendLine("Notes:  ${card.notes}")
         }
-
-        Text(
-            text = cardNumber.takeLast(4),
-            style = TextStyle(
-                fontFamily = LatoFont,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                letterSpacing = 1.sp,
-                color = Color.White
-            )
-        )
-    }
-}
-
-@Composable
-fun BankCardDotGroup() {
-    Canvas(
-        modifier = Modifier.width(48.dp),
-        onDraw = {
-            val dotRadius = 4.dp.toPx()
-            val spaceBetweenDots = 8.dp.toPx()
-            for (i in 0 until 4) {
-                drawCircle(
-                    color = Color.White,
-                    radius = dotRadius,
-                    center = Offset(
-                        x = i * (dotRadius * 2 + spaceBetweenDots) + dotRadius,
-                        y = center.y
-                    )
-                )
-            }
-        }
-    )
-}
-
-@Composable
-fun BankCardLabelAndText(label: String, text: String, clipboardManager: ClipboardManager) {
-    Column(
-        modifier = Modifier
-            .wrapContentSize()
-            .clickable {
-                clipboardManager.setPrimaryClip(ClipData.newPlainText("Card Number", text))
-            },
-        verticalArrangement = Arrangement.SpaceBetween
-    ) {
-        Text(
-            text = label.uppercase(),
-            style = TextStyle(
-                fontWeight = FontWeight.W300,
-                fontSize = 12.sp,
-                letterSpacing = 1.sp,
-                color = Color.LightGray
-            )
-        )
-        Spacer(modifier = Modifier.height(4.dp))
-        Text(
-            text = text.uppercase(),
-            style = TextStyle(
-                fontWeight = FontWeight.W400,
-                fontSize = 16.sp,
-                letterSpacing = 1.sp,
-                color = Color.White
-            )
-        )
-    }
-}
-
-@Composable
-fun SpaceWrapper(
-    modifier: Modifier = Modifier,
-    space: Dp,
-    top: Boolean = false,
-    right: Boolean = false,
-    bottom: Boolean = false,
-    left: Boolean = false,
-    content: @Composable BoxScope.() -> Unit
-) {
-    Box(
-        contentAlignment = Alignment.Center,
-        modifier = modifier
-            .then(if (top) Modifier.padding(top = space) else Modifier)
-            .then(if (right) Modifier.padding(end = space) else Modifier)
-            .then(if (bottom) Modifier.padding(bottom = space) else Modifier)
-            .then(if (left) Modifier.padding(start = space) else Modifier)
-    ) {
-        content()
     }
 }

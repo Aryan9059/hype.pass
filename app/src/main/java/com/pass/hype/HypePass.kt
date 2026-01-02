@@ -2,8 +2,10 @@ package com.pass.hype
 
 import android.app.Application
 import androidx.room.Room
-import com.pass.hype.data.room.database.CardDatabase
-import com.pass.hype.data.room.database.PasswordDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db. SupportSQLiteDatabase
+import com.pass. hype.data. room.database.CardDatabase
+import com. pass.hype. data.room.database. PasswordDatabase
 
 class HypePass :  Application() {
 
@@ -12,31 +14,25 @@ class HypePass :  Application() {
             private set
         lateinit var cardDatabase: CardDatabase
             private set
-
-        private var isInitialized = false
-
-        fun isDatabaseInitialized(): Boolean = isInitialized
     }
 
     override fun onCreate() {
         super.onCreate()
 
-        passwordDatabase = Room. databaseBuilder(
+        passwordDatabase = Room.databaseBuilder(
             applicationContext,
             PasswordDatabase::class.java,
             "Passwords"
         )
-            .fallbackToDestructiveMigration(false)
+            .fallbackToDestructiveMigration(true)
             .build()
 
-        cardDatabase = Room.databaseBuilder(
+        cardDatabase = Room. databaseBuilder(
             applicationContext,
-            CardDatabase::class.java,
+            CardDatabase::class. java,
             "Cards"
         )
-            .fallbackToDestructiveMigration(false)
+            .fallbackToDestructiveMigration(true)
             .build()
-
-        isInitialized = true
     }
 }

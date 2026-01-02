@@ -123,6 +123,9 @@ dependencies {
 
     //Json Serialization
     implementation(libs.kotlinx.serialization.json)
+
+    //Gson Serialization
+    implementation("com.google.code.gson:gson:2.13.2")
 }
 java {
     toolchain {

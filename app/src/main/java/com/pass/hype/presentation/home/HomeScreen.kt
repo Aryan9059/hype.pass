@@ -35,7 +35,6 @@ import androidx.compose. ui.text.font.Font
 import androidx.compose.ui.text. font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.pass.hype.R
-import com.pass.hype.data.room.model.Cards
 import com.pass.hype.data.room.model.Passwords
 import com.pass.hype.presentation.cards.CardViewModel
 import com.pass.hype.presentation.cards.CardsScreen
@@ -44,7 +43,6 @@ import com.pass.hype.components.password.AddPasswordDialog
 import com.pass.hype.presentation.passwords. PasswordViewModel
 import com.pass.hype.presentation.passwords.PasswordsScreen
 import com. pass.hype. presentation.settings.SettingsScreen
-import com.pass.hype.utils.detectCardCompany
 import com.pass.hype.utils.generateStrongPassword
 import com. pass.hype. utils.getPasswordStrength
 import kotlinx.coroutines.launch
@@ -136,46 +134,14 @@ fun HomeScreen(
         )
     }
 
-    // Card Dialog
     AddCardDialog(
         isOpen = isCardDialogOpen,
-        cardName = cardName,
-        cardNumber = cardNumber,
-        expiryMonth = expiryMonth,
-        expiryYear = expiryYear,
-        cvv = cvv,
-        company = company,
-        onDismissRequest = {
-            scope.launch {
-                clearCardFields()
-                isCardDialogOpen = false
-            }
-        },
-        onConfirmButtonClick = {
-            scope.launch {
-                cardViewModel.addCard(
-                    Cards(
-                        baseColor = listOf("#FF46263a", "#ff633664", "#ff3d4758").random(),
-                        cardNumber = cardNumber,
-                        cardHolder = cardName,
-                        expires = "$expiryMonth/$expiryYear",
-                        cvv = cvv
-                    )
-                )
-                clearCardFields()
-                isCardDialogOpen = false
-            }
-        },
-        onNameChanged = { cardName = it },
-        onNumberChanged = {
-            cardNumber = it. take(16)
-            company = detectCardCompany(cardNumber)
-        },
-        onExpiryMonthChanged = { expiryMonth = it. take(2) },
-        onExpiryYearChanged = { expiryYear = it.take(2) },
-        onCvvChanged = { cvv = it.take(3) },
-        onCompanyChanged = { company = it },
-        edit = false
+        existingCard = null,
+        onDismiss = { isCardDialogOpen = false },
+        onSave = { card ->
+            cardViewModel.addCard(card)
+            isCardDialogOpen = false
+        }
     )
 
     // Password Dialog
@@ -303,7 +269,7 @@ private fun HomeContent(
         )
         NavIndex.CARDS -> CardsScreen(
             modifier = modifier,
-            cardViewModel = cardViewModel
+            viewModel = cardViewModel
         )
         NavIndex. SETTINGS -> SettingsScreen(
             modifier = modifier
