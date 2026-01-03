@@ -1,42 +1,44 @@
 package com.pass.hype.components.password
 
 import android.annotation.SuppressLint
-import android.content.ClipData
+import android. content.ClipData
 import android.content.Intent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
 import androidx. compose.animation.core. Animatable
 import androidx.compose.animation. core.LinearOutSlowInEasing
-import androidx.compose.animation.core. animateFloatAsState
+import androidx. compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core. tween
 import androidx.compose.animation. expandVertically
-import androidx.compose.animation. fadeIn
-import androidx.compose.animation. fadeOut
-import androidx.compose.animation. shrinkVertically
-import androidx.compose.foundation.layout. Arrangement
-import androidx.compose.foundation. layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose. foundation.layout.Row
+import androidx. compose.animation.fadeIn
+import androidx. compose.animation.fadeOut
+import androidx. compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout. Box
+import androidx. compose.foundation.layout.Column
+import androidx.compose.foundation. layout.Row
 import androidx.compose.foundation.layout. Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout. fillMaxWidth
-import androidx.compose.foundation.layout. padding
-import androidx. compose.foundation.layout.size
+import androidx.compose.foundation.layout.padding
+import androidx.compose. foundation.layout.size
 import androidx.compose.foundation.layout. width
 import androidx. compose.foundation.shape.CircleShape
 import androidx.compose.foundation. shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.FilledTonalIconButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx. compose.material3.IconButtonDefaults
+import androidx.compose.material. icons.Icons
+import androidx.compose.material.icons.filled. KeyboardArrowDown
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose. material3.FilledTonalIconButton
+import androidx. compose.material3.Icon
+import androidx. compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
-import androidx.compose.material3.Surface
+import androidx. compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose. runtime.LaunchedEffect
@@ -44,40 +46,40 @@ import androidx. compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime. remember
 import androidx. compose.runtime.saveable.rememberSaveable
-import androidx.compose. runtime.setValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui. draw.rotate
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.runtime. setValue
+import androidx. compose.ui. Alignment
+import androidx. compose.ui. Modifier
+import androidx. compose.ui.draw.rotate
+import androidx.compose.ui.graphics. graphicsLayer
 import androidx.compose.ui. platform.LocalClipboard
 import androidx.compose.ui.platform. LocalContext
 import androidx.compose.ui. res.painterResource
 import androidx.compose.ui. text.TextStyle
 import androidx. compose.ui.text.font.Font
 import androidx.compose.ui.text. font.FontFamily
-import androidx.compose.ui.text. font.FontWeight
-import androidx.compose. ui.text.input.KeyboardType
-import androidx.compose.ui. text.input. PasswordVisualTransformation
-import androidx.compose. ui.text.input. VisualTransformation
+import androidx.compose. ui.text.font.FontWeight
+import androidx.compose.ui.text.input. KeyboardType
+import androidx.compose.ui.text.input. PasswordVisualTransformation
+import androidx.compose.ui. text.input. VisualTransformation
 import androidx.compose. ui.text.style.TextOverflow
 import androidx. compose.ui.unit.dp
 import com.github.marlonlom.utilities.timeago.TimeAgo
-import com.pass.hype.R
-import com.pass.hype.data.room.model.Passwords
+import com.pass. hype.R
+import com.pass. hype.data. room.model. Passwords
 import com. pass.hype. utils.appList
-import com.pass.hype.utils.capitalizeWords
-import com.pass.hype.utils.generateStrongPassword
-import com. pass.hype. utils.getPasswordStrength
+import com.pass. hype.utils. capitalizeWords
+import com.pass.hype.utils.getPasswordStrength
 
 @SuppressLint("DiscouragedApi")
 @Composable
 fun PasswordItem(
-    item: Passwords,
+    modifier: Modifier = Modifier,
+    item:  Passwords,
     onEdit: (Passwords) -> Unit,
-    onDelete:  (Int) -> Unit,
-    modifier: Modifier = Modifier
+    onDelete: (Int) -> Unit,
+    isEnd: Boolean = false
 ) {
-    val context = LocalContext.current
+    val context = LocalContext. current
     val clipboardManager = LocalClipboard.current. nativeClipboard
 
     val drawableId = remember(item. appIcon) {
@@ -87,13 +89,6 @@ fun PasswordItem(
             context.packageName
         )
     }
-
-    // Dialog states
-    var isPasswordDialogOpen by rememberSaveable { mutableStateOf(false) }
-    var app by remember { mutableStateOf(item. appName) }
-    var email by remember { mutableStateOf(item. email) }
-    var password by remember { mutableStateOf(item.password) }
-    var notes by remember { mutableStateOf(item. notes) }
 
     // UI states
     var expandedState by rememberSaveable { mutableStateOf(false) }
@@ -110,55 +105,20 @@ fun PasswordItem(
         alphaAnimation.animateTo(targetValue = 1f, animationSpec = tween(300))
     }
 
-    // Edit Dialog
-    AddPasswordDialog(
-        app = app,
-        email = email,
-        password = password,
-        notes = notes,
-        onNotesChanged = { notes = it },
-        onDismiss = {
-            isPasswordDialogOpen = false
-            // Reset to original values
-            app = item.appName
-            email = item.email
-            password = item.password
-            notes = item.notes
-        },
-        onConfirm = {
-            onEdit(
-                Passwords(
-                    passwordId = item.passwordId,
-                    appName = app,
-                    appIcon = app.lowercase(),
-                    email = email,
-                    password = password,
-                    editTime = System.currentTimeMillis().toString(),
-                    edited = true,
-                    notes = notes
-                )
-            )
-            isPasswordDialogOpen = false
-        },
-        onEmailChanged = { email = it },
-        isOpen = isPasswordDialogOpen,
-        onPasswordChanged = { password = it },
-        onAppChanged = { app = it },
-        onCreateClick = { password = generateStrongPassword() },
-        passStrength = password.getPasswordStrength()
-    )
-
-    OutlinedCard(
-        shape = RoundedCornerShape(21.dp),
+    Card (
+        shape = RoundedCornerShape(4.dp),
         modifier = modifier
-            .fillMaxWidth()
-            .graphicsLayer { alpha = alphaAnimation. value }
+            . fillMaxWidth()
+            .graphicsLayer { alpha = alphaAnimation.value }
             .animateContentSize(
                 animationSpec = tween(
                     durationMillis = 400,
                     easing = LinearOutSlowInEasing
                 )
             ),
+        colors = CardDefaults.cardColors().copy(
+            containerColor = MaterialTheme.colorScheme.surfaceContainer
+        ),
         onClick = { expandedState = ! expandedState }
     ) {
         Column(
@@ -175,9 +135,9 @@ fun PasswordItem(
                 onShareClick = {
                     val shareText = buildString {
                         appendLine("App: ${item.appName}")
-                        appendLine("Email:  ${item.email}")
+                        appendLine("Email: ${item.email}")
                         appendLine("Password: ${item.password}")
-                        if (item.notes. isNotEmpty()) {
+                        if (item.notes.isNotEmpty()) {
                             appendLine("Notes: ${item.notes}")
                         }
                     }
@@ -187,7 +147,10 @@ fun PasswordItem(
                     }
                     context.startActivity(Intent.createChooser(sendIntent, "Share Password"))
                 },
-                onEditClick = { isPasswordDialogOpen = true }
+                onEditClick = {
+                    // Call onEdit with the current item to navigate to edit screen
+                    onEdit(item)
+                }
             )
 
             // Expanded Content
@@ -214,9 +177,9 @@ fun PasswordItem(
 
                     // Password Field
                     PasswordDetailField(
-                        value = item.password,
+                        value = item. password,
                         label = "Password",
-                        leadingIcon = R. drawable.password,
+                        leadingIcon = R.drawable.password,
                         isPassword = true,
                         passwordVisible = passwordVisibility,
                         onToggleVisibility = { passwordVisibility = ! passwordVisibility },
@@ -245,7 +208,8 @@ fun PasswordItem(
                             clipboardManager. setPrimaryClip(
                                 ClipData.newPlainText("Password", item.password)
                             )
-                        }
+                        },
+                        onDelete = { onDelete(item. passwordId) }
                     )
                 }
             }
@@ -294,7 +258,7 @@ private fun PasswordItemHeader(
                 } else {
                     item.email
                 },
-                style = MaterialTheme. typography.bodySmall,
+                style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme. colorScheme.onSurfaceVariant,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -371,10 +335,10 @@ private fun AppIconBadge(
                 )
             } else {
                 Text(
-                    text = appName. firstOrNull()?.uppercase() ?: "?",
+                    text = appName. firstOrNull()?.uppercase() ?: "? ",
                     style = MaterialTheme. typography.titleLarge,
                     fontWeight = FontWeight. Bold,
-                    color = MaterialTheme.colorScheme. onSecondaryContainer
+                    color = MaterialTheme.colorScheme.onSecondaryContainer
                 )
             }
         }
@@ -430,7 +394,7 @@ private fun PasswordDetailField(
                     IconButton(onClick = onToggleVisibility) {
                         Icon(
                             painter = painterResource(
-                                if (passwordVisible) R.drawable.eye_close else R.drawable. eye_open
+                                if (passwordVisible) R.drawable.eye_close else R.drawable.eye_open
                             ),
                             contentDescription = if (passwordVisible) "Hide" else "Show",
                             modifier = Modifier.size(20.dp)
@@ -458,7 +422,8 @@ private fun PasswordDetailField(
 @Composable
 private fun PasswordItemActions(
     passwordStrength: String,
-    onCopyPassword: () -> Unit
+    onCopyPassword: () -> Unit,
+    onDelete: () -> Unit
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -468,28 +433,55 @@ private fun PasswordItemActions(
         // Password Strength Badge
         PasswordStrengthBadge(strength = passwordStrength)
 
-        // Copy Button
-        Surface(
-            onClick = onCopyPassword,
-            shape = RoundedCornerShape(12.dp),
-            color = MaterialTheme. colorScheme.primaryContainer
-        ) {
-            Row(
-                modifier = Modifier. padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Delete Button
+            Surface(
+                onClick = onDelete,
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme. colorScheme.errorContainer
             ) {
-                Icon(
-                    painter = painterResource(R.drawable.copy),
-                    contentDescription = null,
-                    modifier = Modifier.size(18.dp),
-                    tint = MaterialTheme. colorScheme.onPrimaryContainer
-                )
-                Text(
-                    text = "Copy Password",
-                    style = MaterialTheme. typography.labelLarge,
-                    color = MaterialTheme.colorScheme. onPrimaryContainer
-                )
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement. spacedBy(6.dp),
+                    verticalAlignment = Alignment. CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.delete),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme. colorScheme.onErrorContainer
+                    )
+                    Text(
+                        text = "Delete",
+                        style = MaterialTheme.typography. labelMedium,
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                }
+            }
+
+            // Copy Button
+            Surface(
+                onClick = onCopyPassword,
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme. colorScheme.primaryContainer
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    horizontalArrangement = Arrangement. spacedBy(6.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        painter = painterResource(R.drawable.copy),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                    Text(
+                        text = "Copy",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+                }
             }
         }
     }
@@ -498,11 +490,12 @@ private fun PasswordItemActions(
 @Composable
 fun PasswordStrengthBadge(strength: String) {
     val (backgroundColor, textColor) = when (strength. lowercase()) {
-        "strong" -> MaterialTheme.colorScheme.primaryContainer to MaterialTheme.colorScheme.onPrimaryContainer
+        "very strong" -> MaterialTheme.colorScheme.primary to MaterialTheme.colorScheme.onPrimary
+        "strong" -> MaterialTheme.colorScheme. primaryContainer to MaterialTheme.colorScheme. onPrimaryContainer
         "good" -> MaterialTheme.colorScheme. tertiaryContainer to MaterialTheme.colorScheme.onTertiaryContainer
         "fair" -> MaterialTheme.colorScheme. secondaryContainer to MaterialTheme.colorScheme.onSecondaryContainer
-        "weak" -> MaterialTheme.colorScheme. errorContainer to MaterialTheme.colorScheme. onErrorContainer
-        else -> MaterialTheme.colorScheme. errorContainer to MaterialTheme.colorScheme. onErrorContainer
+        "weak" -> MaterialTheme.colorScheme. errorContainer to MaterialTheme.colorScheme.onErrorContainer
+        else -> MaterialTheme. colorScheme.errorContainer to MaterialTheme.colorScheme. onErrorContainer
     }
 
     Surface(
@@ -513,7 +506,7 @@ fun PasswordStrengthBadge(strength: String) {
             text = strength. uppercase(),
             modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
             style = MaterialTheme. typography.labelMedium,
-            fontFamily = FontFamily(Font(R.font.password)),
+            fontFamily = FontFamily(Font(R.font. password)),
             color = textColor
         )
     }

@@ -144,7 +144,7 @@ fun CardsScreen(
         ) {
             SearchBar(
                 modifier = Modifier.weight(1f),
-                hint = "Search cards.. .",
+                hint = "Search Cards",
                 searchQuery = searchQuery,
                 onValueChange = { searchQuery = it },
                 isEnabled = ! isListEmpty,
@@ -252,7 +252,7 @@ fun CardsScreen(
                         ) { card ->
                             SwipeToDeleteContainer(
                                 item = card,
-                                onDelete = { viewModel.deleteCard(card. cardId) }
+                                onDelete = { viewModel.deleteCard(card.cardId) }
                             ) {
                                 CardItem(
                                     card = card,
@@ -260,9 +260,11 @@ fun CardsScreen(
                                         cardToEdit = card
                                         showEditDialog = true
                                     },
-                                    onDelete = { viewModel.deleteCard(card.cardId) },
+                                    onDelete = {
+                                        cardToEdit = card
+                                    },
                                     onToggleFavorite = { viewModel.toggleFavorite(card.cardId) },
-                                    onTogglePinned = { viewModel. togglePinned(card.cardId) },
+                                    onTogglePinned = { viewModel.togglePinned(card.cardId) },
                                     onToggleLock = { viewModel.toggleLock(card.cardId) },
                                     onCardAccess = { viewModel.recordCardAccess(card.cardId) },
                                     modifier = Modifier.animateItem()
