@@ -12,7 +12,7 @@ import kotlinx.coroutines.withContext
 class PasswordViewModel :  ViewModel() {
     private val passwordDao = HypePass. passwordDatabase.passwordDao()
 
-    val passwordsList: LiveData<List<Passwords>> = passwordDao. getAllPasswords()
+    val passwordsList: LiveData<List<Passwords>> = passwordDao.getAllPasswords()
 
     fun addPassword(passwords: Passwords) {
         viewModelScope.launch(Dispatchers.IO) {

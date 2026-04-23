@@ -30,6 +30,7 @@ import com.pass.hype.presentation.cards.CardViewModel
 import com.pass.hype.presentation.home.HomeScreen
 import com.pass.hype.presentation.passwords.AddPasswordScreen
 import com.pass.hype.presentation.passwords.PasswordViewModel
+import com.pass.hype.presentation.settings.SettingsScreen
 
 private const val ANIMATION_DURATION = 400
 private const val FADE_DURATION = 200
@@ -245,6 +246,26 @@ fun NavGraph(
                 isFingerprintEnabled = isFingerprintEnabled,
                 navController = navController
             )
+        }
+
+        composable(
+            route = Screen.Settings.route,
+            enterTransition = {
+                slideIntoContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Left,
+                    tween(ANIMATION_DURATION)
+                )
+            },
+            exitTransition = {
+                slideOutOfContainer(
+                    AnimatedContentTransitionScope.SlideDirection.Right,
+                    tween(ANIMATION_DURATION)
+                )
+            }
+        ) {
+            Scaffold { paddingValues ->
+                SettingsScreen(modifier = Modifier.padding(paddingValues))
+            }
         }
     }
 }
