@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <!-- Remove BIND_AUTOFILL_SERVICE from here - it's only for the service declaration -->
 
     <application
@@ -63,6 +65,25 @@
             android:launchMode="singleTop"
             android:taskAffinity=""
             android:excludeFromRecents="true" />
+
+        <!-- Card Scan Activity (Stripe) -->
+        <activity
+            android:name=".presentation.cards.CardScanActivity"
+            android:exported="false"
+            android:theme="@style/Theme.HypePass.Autofill"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
+
+        <!-- FileProvider for sharing card photos -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

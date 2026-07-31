@@ -105,8 +105,8 @@ fun PasswordItem(
         alphaAnimation.animateTo(targetValue = 1f, animationSpec = tween(300))
     }
 
-    Card (
-        shape = RoundedCornerShape(4.dp),
+    OutlinedCard (
+        shape = RoundedCornerShape(20.dp),
         modifier = modifier
             . fillMaxWidth()
             .graphicsLayer { alpha = alphaAnimation.value }
@@ -116,9 +116,6 @@ fun PasswordItem(
                     easing = LinearOutSlowInEasing
                 )
             ),
-        colors = CardDefaults.cardColors().copy(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer
-        ),
         onClick = { expandedState = ! expandedState }
     ) {
         Column(
@@ -149,7 +146,9 @@ fun PasswordItem(
                 },
                 onEditClick = {
                     // Call onEdit with the current item to navigate to edit screen
-                    onEdit(item)
+                    if(expandedState) onEdit(item) else {clipboardManager. setPrimaryClip(
+                        ClipData.newPlainText("Password", item.password)
+                    )}
                 }
             )
 
@@ -269,7 +268,7 @@ private fun PasswordItemHeader(
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             FilledTonalIconButton(
                 onClick = onShareClick,
-                modifier = Modifier.size(36.dp),
+                modifier = Modifier.size(28.dp),
                 colors = IconButtonDefaults.filledTonalIconButtonColors(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer
                 )
@@ -277,21 +276,23 @@ private fun PasswordItemHeader(
                 Icon(
                     painter = painterResource(R.drawable.share),
                     contentDescription = "Share",
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(16.dp)
                 )
             }
 
+            Spacer(Modifier.width(4.dp))
+
             FilledTonalIconButton(
                 onClick = onEditClick,
-                modifier = Modifier.size(36.dp),
+                modifier = Modifier.size(28.dp),
                 colors = IconButtonDefaults.filledTonalIconButtonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
             ) {
                 Icon(
-                    painter = painterResource(R.drawable. edit),
+                    painter = painterResource(if(!expandedState) R.drawable.copy else R.drawable.edit),
                     contentDescription = "Edit",
-                    modifier = Modifier.size(18.dp)
+                    modifier = Modifier.size(16.dp)
                 )
             }
 
@@ -301,6 +302,7 @@ private fun PasswordItemHeader(
                 contentDescription = if (expandedState) "Collapse" else "Expand",
                 modifier = Modifier
                     .size(24.dp)
+                    .align(Alignment.CenterVertically)
                     .rotate(rotationState)
                     .padding(start = 4.dp),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant
@@ -316,7 +318,7 @@ private fun AppIconBadge(
     isKnownApp: Boolean
 ) {
     Surface(
-        modifier = Modifier.size(44.dp),
+        modifier = Modifier.size(40.dp),
         shape = CircleShape,
         color = MaterialTheme.colorScheme. secondaryContainer
     ) {

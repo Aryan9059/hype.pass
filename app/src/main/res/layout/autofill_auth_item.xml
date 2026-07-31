@@ -3,23 +3,33 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="12dp"
+    android:padding="10dp"
     android:gravity="center_vertical"
-    android:background="?android:selectableItemBackground">
+    android:background="?android:attr/selectableItemBackground"
+    android:minHeight="60dp">
 
-    <ImageView
-        android:id="@+id/autofill_icon"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/lock"
-        android:contentDescription="@null" />
+    <FrameLayout
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="@drawable/autofill_avatar_bg">
+
+        <ImageView
+            android:id="@+id/autofill_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:src="@drawable/lock"
+            android:contentDescription="@null" />
+
+    </FrameLayout>
 
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:orientation="vertical"
-        android:layout_marginStart="12dp">
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="8dp">
 
         <TextView
             android:id="@+id/autofill_title"
@@ -28,7 +38,7 @@
             android:text="Unlock HypePass"
             android:textSize="14sp"
             android:textStyle="bold"
-            android:textColor="?android:textColorPrimary" />
+            android:textColor="?android:attr/textColorPrimary" />
 
         <TextView
             android:id="@+id/autofill_subtitle"
@@ -36,8 +46,16 @@
             android:layout_height="wrap_content"
             android:text="Tap to authenticate"
             android:textSize="12sp"
-            android:textColor="?android:textColorSecondary" />
+            android:textColor="?android:attr/textColorSecondary"
+            android:layout_marginTop="2dp" />
 
     </LinearLayout>
+
+    <ImageView
+        android:layout_width="18dp"
+        android:layout_height="18dp"
+        android:src="@drawable/next"
+        android:importantForAccessibility="no"
+        android:layout_marginEnd="2dp" />
 
 </LinearLayout>

@@ -40,19 +40,16 @@ fun CardItem(
     var showFullNumber by rememberSaveable { mutableStateOf(false) }
     var showCvv by rememberSaveable { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
+    var showCardPhoto by rememberSaveable { mutableStateOf(false) }
+
+    val hasPhoto = !card.frontImageUri.isNullOrEmpty()
 
     // Auto-hide sensitive data
     LaunchedEffect(showFullNumber) {
-        if (showFullNumber) {
-            delay(10000)
-            showFullNumber = false
-        }
+        if (showFullNumber) { delay(10000); showFullNumber = false }
     }
     LaunchedEffect(showCvv) {
-        if (showCvv) {
-            delay(10000)
-            showCvv = false
-        }
+        if (showCvv) { delay(10000); showCvv = false }
     }
 
     Box(
@@ -61,58 +58,64 @@ fun CardItem(
             .padding(horizontal = 12.dp, vertical = 6.dp)
             .animateContentSize()
     ) {
-        // --- 1. The Card Visuals ---
+        // --- Card visual: photo OR designed card ---
         Box(modifier = Modifier.clickable { onCardAccess() }) {
-            when {
-                card.cardSubType == CardSubType.AADHAAR -> {
-                    AadhaarCardDesign(
-                        card = card,
-                        showFullNumber = showFullNumber,
-                        onToggleVisibility = {
-                            showFullNumber = !showFullNumber
-                            if (showFullNumber) onCardAccess()
-                        }
-                    )
-                }
-                card.cardSubType == CardSubType.PAN -> {
-                    PanCardDesign(
-                        card = card,
-                        showFullNumber = showFullNumber,
-                        onToggleVisibility = {
-                            showFullNumber = !showFullNumber
-                            if (showFullNumber) onCardAccess()
-                        }
-                    )
-                }
-                card.cardType == CardType.FINANCIAL -> {
-                    BankCardDesign(
-                        card = card,
-                        showFullNumber = showFullNumber,
-                        showCvv = showCvv,
-                        onToggleNumber = {
-                            showFullNumber = !showFullNumber
-                            if (showFullNumber) onCardAccess()
-                        },
-                        onToggleCvv = {
-                            showCvv = !showCvv
-                            if (showCvv) onCardAccess()
-                        }
-                    )
-                }
-                else -> {
-                    // Assuming you have a generic design, or use BankCardDesign as fallback
-                    BankCardDesign(
-                        card = card,
-                        showFullNumber = showFullNumber,
-                        showCvv = showCvv,
-                        onToggleNumber = { showFullNumber = !showFullNumber },
-                        onToggleCvv = { showCvv = !showCvv }
-                    )
+            if (showCardPhoto && hasPhoto) {
+                CardPhotoView(
+                    frontImageUri = card.frontImageUri,
+                    backImageUri = card.backImageUri
+                )
+            } else {
+                when {
+                    card.cardSubType == CardSubType.AADHAAR -> {
+                        AadhaarCardDesign(
+                            card = card,
+                            showFullNumber = showFullNumber,
+                            onToggleVisibility = {
+                                showFullNumber = !showFullNumber
+                                if (showFullNumber) onCardAccess()
+                            }
+                        )
+                    }
+                    card.cardSubType == CardSubType.PAN -> {
+                        PanCardDesign(
+                            card = card,
+                            showFullNumber = showFullNumber,
+                            onToggleVisibility = {
+                                showFullNumber = !showFullNumber
+                                if (showFullNumber) onCardAccess()
+                            }
+                        )
+                    }
+                    card.cardType == CardType.FINANCIAL -> {
+                        BankCardDesign(
+                            card = card,
+                            showFullNumber = showFullNumber,
+                            showCvv = showCvv,
+                            onToggleNumber = {
+                                showFullNumber = !showFullNumber
+                                if (showFullNumber) onCardAccess()
+                            },
+                            onToggleCvv = {
+                                showCvv = !showCvv
+                                if (showCvv) onCardAccess()
+                            }
+                        )
+                    }
+                    else -> {
+                        BankCardDesign(
+                            card = card,
+                            showFullNumber = showFullNumber,
+                            showCvv = showCvv,
+                            onToggleNumber = { showFullNumber = !showFullNumber },
+                            onToggleCvv = { showCvv = !showCvv }
+                        )
+                    }
                 }
             }
         }
 
-        // --- 2. Action Overlay (Top Right Menu & Toggles) ---
+        // --- Action overlay (top-right) ---
         Row(
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -120,7 +123,7 @@ fun CardItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            // Favorite Toggle (Visible on card for quick access)
+            // Favorite toggle
             IconButton(
                 onClick = onToggleFavorite,
                 modifier = Modifier
@@ -135,7 +138,7 @@ fun CardItem(
                 )
             }
 
-            // More Options Menu
+            // More options menu
             Box {
                 IconButton(
                     onClick = { showMenu = true },
@@ -156,17 +159,29 @@ fun CardItem(
                     onDismissRequest = { showMenu = false },
                     modifier = Modifier.background(MaterialTheme.colorScheme.surface)
                 ) {
-                    // Edit
+                    // View card photo / designed card toggle
+                    if (hasPhoto) {
+                        DropdownMenuItem(
+                            text = { Text(if (showCardPhoto) "Show Card Design" else "Show Card Photo") },
+                            leadingIcon = {
+                                Icon(
+                                    imageVector = if (showCardPhoto) Icons.Default.CreditCard else Icons.Default.Image,
+                                    contentDescription = null
+                                )
+                            },
+                            onClick = {
+                                showMenu = false
+                                showCardPhoto = !showCardPhoto
+                            }
+                        )
+                    }
+
                     DropdownMenuItem(
                         text = { Text("Edit Card") },
                         leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) },
-                        onClick = {
-                            showMenu = false
-                            onEdit()
-                        }
+                        onClick = { showMenu = false; onEdit() }
                     )
 
-                    // Pin Toggle
                     DropdownMenuItem(
                         text = { Text(if (card.isPinned) "Unpin" else "Pin to Top") },
                         leadingIcon = {
@@ -175,13 +190,9 @@ fun CardItem(
                                 contentDescription = null
                             )
                         },
-                        onClick = {
-                            showMenu = false
-                            onTogglePinned()
-                        }
+                        onClick = { showMenu = false; onTogglePinned() }
                     )
 
-                    // Share
                     DropdownMenuItem(
                         text = { Text("Share Details") },
                         leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
@@ -198,28 +209,27 @@ fun CardItem(
 
                     HorizontalDivider()
 
-                    // Delete
                     DropdownMenuItem(
                         text = { Text("Delete", color = MaterialTheme.colorScheme.error) },
-                        leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
-                        onClick = {
-                            showMenu = false
-                            onDelete()
-                        }
+                        leadingIcon = {
+                            Icon(Icons.Default.Delete, contentDescription = null,
+                                tint = MaterialTheme.colorScheme.error)
+                        },
+                        onClick = { showMenu = false; onDelete() }
                     )
                 }
             }
         }
 
-        // --- 3. Locked Indicator (Top Left) ---
-        if (card.isLocked) { // Assuming isLocked exists
+        // --- Locked indicator (top-left) ---
+        if (card.isLocked) {
             Box(
                 modifier = Modifier
                     .align(Alignment.TopStart)
                     .padding(8.dp)
                     .size(32.dp)
                     .background(Color.Black.copy(alpha = 0.2f), CircleShape)
-                    .clickable { onToggleLock() }, // Quick unlock?
+                    .clickable { onToggleLock() },
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
@@ -238,7 +248,7 @@ private fun buildCardShareText(card: Card): String {
         appendLine("Card: ${card.cardName}")
         appendLine("Type: ${CardUtils.getCardSubTypeDisplayName(card.cardSubType)}")
         appendLine("Holder: ${card.holderName}")
-        appendLine("Number: ${card.cardNumberMasked}") // Ensure you use masked for sharing
+        appendLine("Number: ${card.cardNumberMasked}")
         card.expiryDate?.let { appendLine("Expires: $it") }
         card.issuer?.let { appendLine("Issuer: $it") }
     }

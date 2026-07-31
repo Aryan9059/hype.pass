@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,6 +24,13 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.window.Dialog
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -98,204 +106,232 @@ fun AddPasswordDialog(
 
     expand = isOpen
 
-    if (isOpen){
-        AlertDialog (
-            title = { Text(text = "Create Password") },
-            properties = DialogProperties(dismissOnClickOutside = false),
+    if (isOpen) {
+        Dialog(
             onDismissRequest = onDismiss,
-            text = {
-            Column {
-                Spacer(Modifier.size(16.dp))
-
-                val length = password.length
+            properties = DialogProperties(dismissOnClickOutside = false, usePlatformDefaultWidth = false)
+        ) {
+            Surface(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
+            ) {
                 Column(
                     modifier = Modifier
-                        .verticalScroll(rememberScrollState())
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(32.dp))
+                        .fillMaxSize()
+                        .padding(16.dp)
                 ) {
-                    Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                        Column {
-                            Icon(
-                                painter = painterResource(R.drawable.password),
-                                contentDescription = "Password Strength Icon",
-                                modifier = Modifier
-                                    .size(28.dp)
-                                    .align(Alignment.CenterHorizontally),
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .padding(top = 6.dp, bottom = 4.dp)
-                                    .align(Alignment.CenterHorizontally),
-                                text = passStrength,
-                                fontFamily = FontFamily(Font(R.font.password)),
-                                fontSize = 28.sp,
-                                fontWeight = FontWeight.Bold
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .align(Alignment.CenterHorizontally)
-                                    .padding(bottom = 10.dp),
-                                text = "$length characters",
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.7f),
-                                fontSize = 14.sp
-                            )
-                        }
-                        CircularProgressIndicator(
-                            progress = { animatedProgress.value },
-                            strokeWidth = 12.dp,
-                            strokeCap = StrokeCap.Round,
-                            trackColor = MaterialTheme.colorScheme.background,
-                            modifier = Modifier
-                                .size(200.dp),
-                        )
-                    }
-                }
-
-                Spacer(Modifier.size(24.dp))
-
-                Column {
-                    var expanded by remember { mutableStateOf(false) }
-
-                    val context = LocalContext.current
-                    val drawableId = remember(app.lowercase()) {
-                        context.resources.getIdentifier(
-                            app.lowercase(),
-                            "drawable",
-                            context.packageName
-                        )
-                    }
-                    ExposedDropdownMenuBox(
-                        expanded = expanded,
-                        onExpandedChange = { expanded = !expanded },
-                        modifier = Modifier
+                    // Header
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        @Suppress("DEPRECATION")
-                        OutlinedTextField(
-                            shape = RoundedCornerShape(12.dp),
-                            value = app,
-                            onValueChange = onAppChanged,
-                            label = { Text(text = "Select App") },
-                            trailingIcon = {
-                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
-                            },
-                            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
-                            leadingIcon = {
-                                if (!appList.contains(app)) {
+                        Text(
+                            text = "Create Password",
+                            style = MaterialTheme.typography.headlineSmall,
+                            fontWeight = FontWeight.Bold
+                        )
+                        IconButton(onClick = onDismiss) {
+                            Icon(imageVector = Icons.Default.Close, contentDescription = "Close")
+                        }
+                    }
+
+                    Spacer(Modifier.height(16.dp))
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState())
+                    ) {
+                        val length = password.length
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(32.dp))
+                        ) {
+                            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                                Column {
                                     Icon(
-                                        painter = painterResource(R.drawable.app),
-                                        contentDescription = "App Icon",
-                                        Modifier.size(24.dp)
+                                        painter = painterResource(R.drawable.password),
+                                        contentDescription = "Password Strength Icon",
+                                        modifier = Modifier
+                                            .size(28.dp)
+                                            .align(Alignment.CenterHorizontally),
                                     )
-                                } else {
-                                    Icon(
-                                        modifier = Modifier.size(24.dp),
-                                        tint = MaterialTheme.colorScheme.onBackground,
-                                        painter = painterResource(id = drawableId),
-                                        contentDescription = "App Icon"
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(top = 6.dp, bottom = 4.dp)
+                                            .align(Alignment.CenterHorizontally),
+                                        text = passStrength,
+                                        fontFamily = FontFamily(Font(R.font.password)),
+                                        fontSize = 28.sp,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                    Text(
+                                        modifier = Modifier
+                                            .align(Alignment.CenterHorizontally)
+                                            .padding(bottom = 10.dp),
+                                        text = "$length characters",
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(0.7f),
+                                        fontSize = 14.sp
                                     )
                                 }
-                            },
-                            colors = OutlinedTextFieldDefaults.colors(),
-                            modifier = Modifier
-                                .menuAnchor()
-                                .fillMaxWidth()
-                        )
-
-                        ExposedDropdownMenu(
-                            expanded = expanded,
-                            onDismissRequest = { expanded = false },
-                            modifier = Modifier.height(208.dp)
-                        ) {
-                            appList.forEach { option: String ->
-                                DropdownMenuItem(
-                                    text = { Text(text = option) },
-                                    onClick = {
-                                        onAppChanged(option)
-                                        expanded = false
-                                    }
+                                CircularProgressIndicator(
+                                    progress = { animatedProgress.value },
+                                    strokeWidth = 12.dp,
+                                    strokeCap = StrokeCap.Round,
+                                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                    modifier = Modifier.size(200.dp),
                                 )
                             }
+                        }
+
+                        Spacer(Modifier.size(24.dp))
+
+                        Column {
+                            var expanded by remember { mutableStateOf(false) }
+
+                            val context = LocalContext.current
+                            val drawableId = remember(app.lowercase()) {
+                                context.resources.getIdentifier(
+                                    app.lowercase(),
+                                    "drawable",
+                                    context.packageName
+                                )
+                            }
+                            ExposedDropdownMenuBox(
+                                expanded = expanded,
+                                onExpandedChange = { expanded = !expanded },
+                                modifier = Modifier
+                            ) {
+                                @Suppress("DEPRECATION")
+                                OutlinedTextField(
+                                    shape = RoundedCornerShape(12.dp),
+                                    value = app,
+                                    onValueChange = onAppChanged,
+                                    label = { Text(text = "Select App") },
+                                    trailingIcon = {
+                                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+                                    },
+                                    keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+                                    leadingIcon = {
+                                        if (!appList.contains(app)) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.app),
+                                                contentDescription = "App Icon",
+                                                Modifier.size(24.dp)
+                                            )
+                                        } else {
+                                            Icon(
+                                                modifier = Modifier.size(24.dp),
+                                                tint = MaterialTheme.colorScheme.onBackground,
+                                                painter = painterResource(id = drawableId),
+                                                contentDescription = "App Icon"
+                                            )
+                                        }
+                                    },
+                                    colors = OutlinedTextFieldDefaults.colors(),
+                                    modifier = Modifier
+                                        .menuAnchor()
+                                        .fillMaxWidth()
+                                )
+
+                                ExposedDropdownMenu(
+                                    expanded = expanded,
+                                    onDismissRequest = { expanded = false },
+                                    modifier = Modifier.height(208.dp)
+                                ) {
+                                    appList.forEach { option: String ->
+                                        DropdownMenuItem(
+                                            text = { Text(text = option) },
+                                            onClick = {
+                                                onAppChanged(option)
+                                                expanded = false
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.size(6.dp))
+
+                            OutlinedTextField(
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                                value = email,
+                                onValueChange = onEmailChanged,
+                                label = { Text(text = "Email/UserID") },
+                                singleLine = true,
+                                maxLines = 1,
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.email),
+                                        contentDescription = "Email",
+                                        Modifier.size(24.dp)
+                                    )
+                                },
+                                isError = emailError != null && email.isNotBlank(),
+                            )
+
+                            Spacer(modifier = Modifier.size(6.dp))
+
+                            OutlinedTextField(
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                                value = password,
+                                onValueChange = onPasswordChanged,
+                                label = { Text(text = "Password") },
+                                singleLine = true,
+                                textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.password))),
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                                trailingIcon = {
+                                    IconButton(onClick = onCreateClick) {
+                                        Icon(
+                                            modifier = Modifier.size(24.dp),
+                                            painter = painterResource(R.drawable.create),
+                                            contentDescription = "Create Password"
+                                        )
+                                    }
+                                },
+                                isError = passwordError != null && password.isNotBlank(),
+                                leadingIcon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.password),
+                                        contentDescription = "Password Text Box Icon",
+                                        Modifier.size(24.dp)
+                                    )
+                                }
+                            )
+
+                            Spacer(modifier = Modifier.size(6.dp))
+
+                            OutlinedTextField(
+                                shape = RoundedCornerShape(12.dp),
+                                modifier = Modifier.fillMaxWidth(),
+                                value = notes,
+                                onValueChange = onNotesChanged,
+                                label = { Text(text = "Additional Notes") },
+                                singleLine = false,
+                                maxLines = 3,
+                            )
                         }
                     }
 
-                    Spacer(modifier = Modifier.size(6.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
 
-                    OutlinedTextField(
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.fillMaxWidth(),
-                        value = email,
-                        onValueChange = onEmailChanged,
-                        label = { Text(text = "Email/UserID") },
-                        singleLine = true,
-                        maxLines = 1,
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.email),
-                                contentDescription = "Email",
-                                Modifier.size(24.dp)
-                            )
-                        },
-                        isError = emailError != null && email.isNotBlank(),
-                    )
-
-                    Spacer(modifier = Modifier.size(6.dp))
-
-                    OutlinedTextField(
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.fillMaxWidth(),
-                        value = password,
-                        onValueChange = onPasswordChanged,
-                        label = { Text(text = "Password") },
-                        singleLine = true,
-                        textStyle = TextStyle(fontFamily = FontFamily(Font(R.font.password))),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        trailingIcon = {
-                            IconButton(onClick = onCreateClick) {
-                                Icon(
-                                    modifier = Modifier.size(24.dp),
-                                    painter = painterResource(R.drawable.create),
-                                    contentDescription = "Create Password"
-                                )
-                            }
-                        },
-                        isError = passwordError != null && password.isNotBlank(),
-                        leadingIcon = {
-                            Icon(
-                                painter = painterResource(R.drawable.password),
-                                contentDescription = "Password Text Box Icon",
-                                Modifier.size(24.dp)
-                            )
-                        }
-                    )
-
-                    Spacer(modifier = Modifier.size(6.dp))
-
-                    OutlinedTextField(
-                        shape = RoundedCornerShape(12.dp),
-                        modifier = Modifier.fillMaxWidth(),
-                        value = notes,
-                        onValueChange = onNotesChanged,
-                        label = { Text(text = "Additional Notes") },
-                        singleLine = false,
-                        maxLines = 3,
-                    )
+                    Button(
+                        onClick = onConfirm,
+                        enabled = passwordError == null && emailError == null,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Text(text = "Save", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                    }
                 }
             }
-        },
-            dismissButton = {
-                TextButton(onClick = onDismiss) {
-                    Text(text = "Cancel")
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = onConfirm,
-                    enabled = passwordError == null && emailError == null
-                ) {
-                    Text(text = "Save")
-                }
-            }
-        )
+        }
     }
 }

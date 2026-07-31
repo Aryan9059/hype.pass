@@ -67,9 +67,9 @@ fun HomeScreen(
             TopAppBar(
                 title = {
                     Text(
-                        text = "Hype Pass",
-                        fontFamily = FontFamily(Font(R.font.heading)),
-                        fontWeight = FontWeight.Bold
+                        text = "hype.pass",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontFamily = FontFamily(Font(R.font.password)),
                     )
                 },
                 actions = {
@@ -216,6 +216,7 @@ private fun HomeContent(
             modifier = modifier,
             viewModel = cardViewModel
         )
+
     }
 }
 

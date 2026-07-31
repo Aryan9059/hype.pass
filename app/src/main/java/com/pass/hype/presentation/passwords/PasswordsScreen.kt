@@ -127,9 +127,8 @@ fun PasswordsScreen(
                     LazyColumn(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
-                            .clip(RoundedCornerShape(20.dp)),
-                        verticalArrangement = Arrangement.spacedBy(3.dp)
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         items(
                             items = filteredPasswords,

@@ -79,18 +79,14 @@ fun SearchBar(
             // Search Icon
             Box(
                 modifier = Modifier
-                    .size(48.dp)
-                    .background(
-                        color = MaterialTheme. colorScheme.surfaceContainerHighest,
-                        shape = CircleShape
-                    ),
+                    .size(48.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Icon(
                     painter = painterResource(R.drawable.search),
                     contentDescription = "Search",
                     modifier = Modifier.size(20.dp),
-                    tint = MaterialTheme. colorScheme.onSurfaceVariant
+                    tint = MaterialTheme. colorScheme.primary
                 )
             }
 
@@ -155,15 +151,12 @@ fun SearchBar(
                         focusManager. clearFocus()
                     },
                     modifier = Modifier.size(48.dp),
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = MaterialTheme. colorScheme.surfaceContainerHighest
-                    )
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "Clear search",
                         modifier = Modifier.size(18.dp),
-                        tint = MaterialTheme. colorScheme.onSurfaceVariant
+                        tint = MaterialTheme. colorScheme.primary
                     )
                 }
             }

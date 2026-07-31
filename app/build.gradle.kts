@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.pass.hype"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.pass.hype"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 3
         versionName = "3.0"
 
@@ -32,6 +32,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -126,6 +127,15 @@ dependencies {
 
     //Gson Serialization
     implementation("com.google.code.gson:gson:2.13.2")
+
+    // Google ML Kit – Document Scanner (clean card photo + perspective correction)
+    implementation("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0-beta1")
+
+    // Google ML Kit – Text Recognition (OCR for card number / expiry / name)
+    implementation("com.google.mlkit:text-recognition:16.0.1")
+
+    // Coil for card photo display
+    implementation("io.coil-kt:coil-compose:2.7.0")
 }
 java {
     toolchain {
